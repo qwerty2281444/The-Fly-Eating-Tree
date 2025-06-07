@@ -35,7 +35,31 @@ addLayer("w", {
             cost: new Decimal(3),
             unlocked() { return hasUpgrade("w", 11) },
         },
-    },
+
+        13: {
+            title: "Sweet flies!",
+            description: "Wings eaten boost flies eaten",
+            cost: new Decimal(5),
+            effect() {
+                return player[this.layer].points.add(1).pow(0.5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            unlocked() { return hasUpgrade("w", 12) },
+        },
+
+        14: {
+            title: "Spicy flies!",
+            description: "flies eaten boost wings eaten",
+            cost: new Decimal(10),
+            effect() {
+                return player.points.add(1).pow(0.15)
+            },
+
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            unlocked() { return hasUpgrade("w", 13) },
+        },
+
+        },
     hotkeys: [
         {key: "w", description: "W: Tear flies for wings", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
