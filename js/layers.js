@@ -33,6 +33,7 @@ addLayer("w", {
             title: "Salty flies!",
             description: "1.5x flies eaten",
             cost: new Decimal(3),
+            unlocked() { return hasUpgrade("p", 11) },
         },
     },
     hotkeys: [
