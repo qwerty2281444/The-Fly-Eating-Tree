@@ -28,6 +28,12 @@ addLayer("w", {
             description: "Double your Flies eaten.",
             cost: new Decimal(1),
         },
+
+        12: {
+            title: "Salty flies!",
+            description: "1.5x flies eaten",
+            cost: new Decimal(3),
+        },
     },
     hotkeys: [
         {key: "w", description: "W: Tear flies for wings", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
