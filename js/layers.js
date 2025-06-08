@@ -26,7 +26,7 @@ addLayer("w", {
     
     upgrades: {
         11: {
-            title: "Flying flies!",
+            title: "Bit flies!",
             description: "Double your Flies eaten.",
             cost: new Decimal(1),
         },
