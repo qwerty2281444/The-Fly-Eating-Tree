@@ -89,7 +89,7 @@ addLayer("w", {
         24: {
             title: "Roasted flies!",
             description: "Flies eaten boost flies eaten, again",
-            cost: new Decimal(150),
+            cost: new Decimal(1000),
             effect() {
                 return player.points.add(1).pow(0.2)
             },
