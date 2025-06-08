@@ -86,6 +86,17 @@ addLayer("w", {
             unlocked() { return hasUpgrade("w", 22) },
         },
 
+        24: {
+            title: "Roasted flies!",
+            description: "Flies eaten boost flies eaten, again",
+            cost: new Decimal(150),
+            effect() {
+                return player.points.add(1).pow(0.2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            unlocked() { return hasUpgrade("w", 23) },
+        },
+
         },
     hotkeys: [
         {key: "w", description: "W: Tear flies for wings", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
