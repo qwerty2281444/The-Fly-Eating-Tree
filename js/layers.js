@@ -112,7 +112,7 @@ addLayer("f", {
         unlocked: false,
 		points: new Decimal(0),
     }},
-    color: "#b8b8b8",
+    color: "#52432eff",
     requires: new Decimal("1e10"), // Can be a function that takes requirement increases into account
     resource: "farms", // Name of prestige currency
     baseResource: "flies", // Name of resource prestige is based on
