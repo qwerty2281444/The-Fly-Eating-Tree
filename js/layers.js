@@ -121,11 +121,10 @@ addLayer("f", {
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.4, // Prestige currency exponent
 	effect() {
-		if ((!unl(this.layer))||inChallenge("ne", 11)) return new Decimal(1);
-		return Decimal.pow(tmp.b.effectBase, player.b.points.plus(tmp.sb.spectralTotal)).max(0).times(hasUpgrade("p", 43)?tmp.q.enEff:1);
+		return Decimal.pow();
 	},
 	effectDescription() {
-		return "which are boosting flys eaaten "+format(tmp.b.effect)+"x"+(tmp.nerdMode?(inChallenge("ne", 11)?"\n (DISABLED)":("\n ("+format(tmp.b.effectBase)+"x each)")):"")
+		return "which are boosting flys eaaten "+format(tmp.f.effect) + "x"
 	},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
