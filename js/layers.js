@@ -120,12 +120,12 @@ addLayer("f", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.4, // Prestige currency exponent
-	effect() {
-		return Decimal.pow();
-	},
-	effectDescription() {
-		return "which are boosting flys eaaten "+format(tmp.f.effect) + "x"
-	},
+	// effect() {
+	// 	return Decimal.pow();
+	// },
+	// effectDescription() {
+	// 	return "which are boosting flys eaaten "+format(tmp.f.effect) + "x"
+	// },
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
