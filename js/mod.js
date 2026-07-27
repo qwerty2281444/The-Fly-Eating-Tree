@@ -1,6 +1,6 @@
 let modInfo = {
-	name: "The ??? Tree",
-	author: "nobody",
+	name: "The Fly Eating Tree",
+	author: "THE ABSOLUTE OF FLIES",
 	pointsName: "Flies",
 	modFiles: ["layers.js", "tree.js"],
 
@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.1",
+	name: "Release",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -48,6 +48,7 @@ function getPointGen() {
 	if (hasUpgrade('w', 22)) gain = gain.times(3)
 	if (hasUpgrade('w', 23)) gain = gain.times(upgradeEffect('w', 23))
 	if (hasUpgrade('w', 24)) gain = gain.times(upgradeEffect('w', 24))
+	if (hasMilestone('f',1)) gain = gain.times(4)
 	return gain
 }
 

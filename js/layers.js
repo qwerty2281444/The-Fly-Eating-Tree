@@ -17,11 +17,13 @@ addLayer("w", {
         mult = new Decimal(1)
         if (hasUpgrade('w', 14)) mult = mult.times(upgradeEffect('w', 14))
         if (hasUpgrade('w', 21)) mult = mult.times(2)
+        if (hasMilestone('f',2)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
+    // passiveGeneration(){return hasMilestone("f",1)},
     row: 0, // Row the layer is in on the tree (0 is the first row)
     
     upgrades: {
@@ -64,14 +66,14 @@ addLayer("w", {
         21: {
             title: "Fried flies!",
             description: "Double your wings eaten.",
-            cost: new Decimal(30),
+            cost: new Decimal(15),
             unlocked() { return hasUpgrade("w", 14) },
         },
 
         22: {
             title: "Boiled flies!",
             description: "Triple your flies eaten.",
-            cost: new Decimal(100),
+            cost: new Decimal(50),
             unlocked() { return hasUpgrade("w", 21) },
         },
 
@@ -114,12 +116,12 @@ addLayer("f", {
     }},
     color: "#52432eff",
     branches: ["w"],
-    requires: new Decimal("1e10"), // Can be a function that takes requirement increases into account
+    requires: new Decimal("1e5"), // Can be a function that takes requirement increases into account
     resource: "farms", // Name of prestige currency
     baseResource: "flies", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.4, // Prestige currency exponent
+    exponent: 1.4, // Prestige currency exponent
 	// effect() {
 	// 	return Decimal.pow();
 	// },
@@ -134,16 +136,28 @@ addLayer("f", {
         return new Decimal(1)
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
-    
-    upgrades: {
-        11: {
-            title: "Bit flies!",
-            description: "Double your Flies eaten.",
-            cost: new Decimal(1),
+
+    milestones : {
+        1: {
+            requirementDescription:"1 Fly Farm",
+            effectDescription: "x4 Flies eaten",
+            done() {return player.f.points.gte(1)}
         },
+        2: {
+            requirementDescription:"2 Fly Farm",
+            effectDescription: "x3 Wings",
+            done() {return player.f.points.gte(2)},
+            unlocked() { return hasMilestone("f",1) },
         },
+        3: {
+            requirementDescription:"4 Fly Farm",
+            effectDescription: "Unlock Poop. A good source of food for flies as well as for you",
+            done() {return player.f.points.gte(4)},
+            unlocked() { return hasMilestone("f",2) },
+        },
+    },
     hotkeys: [
         {key: "f", description: "f: Make a fly farm", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return player.w.unlocked}
+    layerShown(){return player.w.unlocked},
 })
