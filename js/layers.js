@@ -18,13 +18,34 @@ addLayer("w", {
         if (hasUpgrade('w', 14)) mult = mult.times(upgradeEffect('w', 14))
         if (hasUpgrade('w', 21)) mult = mult.times(2)
         if (hasMilestone('f',2)) mult = mult.times(3)
+        if (hasUpgrade('m',11)) mult = mult.times(5)
+        if (hasUpgrade('m', 14)) mult = mult.times(upgradeEffect('m', 14))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    // passiveGeneration(){return hasMilestone("f",1)},
+    passiveGeneration(){if (hasMilestone('f',4) && !hasMilestone('m',1)){
+        return 0.01
+    } else if(hasMilestone('m',1)){
+        return 1
+    }
+    return 0},
     row: 0, // Row the layer is in on the tree (0 is the first row)
+
+    autoUpgrade(){
+        return hasMilestone('m', 2)
+    },
+
+    doReset(resettingLayer) {
+        let keep = [];
+
+        if(hasMilestone('p',1)) keep.push("upgrades");
+
+        if(layers[resettingLayer].row > this.row) {
+            layerDataReset("w",keep)
+        }
+    },
     
     upgrades: {
         11: {
@@ -45,7 +66,9 @@ addLayer("w", {
             description: "Wings eaten boost flies eaten",
             cost: new Decimal(5),
             effect() {
-                return player[this.layer].points.add(1).pow(0.5)
+                let eff = player[this.layer].points.add(1).pow(0.5);
+                eff = softcap(eff,new Decimal(1000),0.4)
+                return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
             unlocked() { return hasUpgrade("w", 12) },
@@ -56,7 +79,9 @@ addLayer("w", {
             description: "flies eaten boost wings eaten",
             cost: new Decimal(10),
             effect() {
-                return player.points.add(1).pow(0.15)
+                let eff = player.points.add(1).pow(0.15);
+                eff = softcap(eff,new Decimal(1000),0.4);
+                return eff
             },
 
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
@@ -82,7 +107,9 @@ addLayer("w", {
             description: "Wings eaten boost flies eaten, again",
             cost: new Decimal(150),
             effect() {
-                return player[this.layer].points.add(1).pow(0.3)
+                let eff = player[this.layer].points.add(1).pow(0.3);
+                eff = softcap(eff,new Decimal(1000),0.4);
+                return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
             unlocked() { return hasUpgrade("w", 22) },
@@ -121,19 +148,22 @@ addLayer("f", {
     baseResource: "flies", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 1.4, // Prestige currency exponent
-	// effect() {
-	// 	return Decimal.pow();
-	// },
-	// effectDescription() {
-	// 	return "which are boosting flys eaaten "+format(tmp.f.effect) + "x"
-	// },
-    gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+    exponent: 2, // Prestige currency exponent
+    gainMult() {
+        let mult = new Decimal(1)
+        if (hasUpgrade("f", 13)) {
+            mult = mult.div(upgradeEffect("f", 13))
+        }
+        if (hasUpgrade("m", 23)) {
+            mult = mult.div(upgradeEffect("m", 23))
+        }
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
+    },
+    canBuyMax() {
+        return hasMilestone('m', 3)
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
 
@@ -155,9 +185,299 @@ addLayer("f", {
             done() {return player.f.points.gte(4)},
             unlocked() { return hasMilestone("f",2) },
         },
+        4: {
+            requirementDescription:"5 Fly Farm",
+            effectDescription: "Generate 1% of wings you would gain on tearing flies",
+            done() {return player.f.points.gte(5)},
+            unlocked() { return hasMilestone("f",3) },
+        },
+        5: {
+            requirementDescription:"10 Fly Farm",
+            effectDescription: "Unlock Metabolism reset",
+            done() {return player.f.points.gte(10)},
+            unlocked() { return hasUpgrade("f",13) },
+        },
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+
+        if(hasMilestone('m',5)) keep.push("upgrades");
+        if(hasMilestone('m',5)) keep.push("milestones");
+
+        if(layers[resettingLayer].row > this.row) {
+            layerDataReset("f",keep)
+        }
+    },
+
+    upgrades: {
+        11:{
+            title: "Flies superfood",
+            description: "Fly Farms boost flies eaten",
+            effect() {
+                return player.f.points.add(1).pow(3)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(6),
+            unlocked() { return hasMilestone("f",4) },
+        },
+        12:{
+            title: "More nutrious Poop",
+            description: "Farms boost Poop",
+            effect() {
+                return player.f.points.add(1).pow(0.5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(7),
+            unlocked() { return hasUpgrade("f",11) },
+        },
+        13:{
+            title: "Flies make it cheap",
+            description: "Flies reduce fly farms requirement",
+            effect() {
+                return player.points.add(1).pow(0.1)
+            },
+            effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(8),
+            unlocked() { return hasUpgrade("f",12) },
+        }
     },
     hotkeys: [
         {key: "f", description: "f: Make a fly farm", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return player.w.unlocked},
+})
+
+addLayer("p", {
+    name: "poop", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#351e00",
+    requires: new Decimal("1e4"), // Can be a function that takes requirement increases into account
+    resource: "poop", // Name of prestige currency
+    baseResource: "wings", // Name of resource prestige is based on
+    baseAmount() {return player.w.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.3, // Prestige currency exponent
+    branches: ["w"],
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1);
+        if (hasUpgrade('f', 12)) mult = mult.times(upgradeEffect("f",12));
+        if (hasUpgrade('m', 13)) mult = mult.times(upgradeEffect("m",13));
+        if (hasUpgrade('m', 11)) mult = mult.times(2);
+        if (hasUpgrade('m', 22)) mult = mult.times(5);
+        if (hasUpgrade('m', 24)) mult = mult.times(upgradeEffect("m",24));
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    effect() {
+		return player.p.points.add(1).pow(0.9)
+	},
+	effectDescription() {
+		return "which are boosting flies eaten by "+format(tmp.p.effect) + "x"
+	},
+    // passiveGeneration(){return hasMilestone("f",1)},
+    row: 1, // Row the layer is in on the tree (0 is the first row)
+
+    milestones: {
+        1: {
+            requirementDescription:"200 Poop",
+            effectDescription: "Keep Fly upgrades on Farm and Poop Reset",
+            done() {return player.p.points.gte(200)},
+        },
+    },
+
+    buyables: {
+        11: {
+            title: "Feed Flies",
+            cost(x = getBuyableAmount(this.layer, this.id)) {
+                return new Decimal(100).mul(Decimal.pow(1.8, x))
+            },
+            purchaseLimit: 100,
+            effect(x = getBuyableAmount(this.layer, this.id)) {
+                return Decimal.pow(2, x)
+            },
+            display() {
+                return `Cost: ${format(this.cost())}\nBought: ${getBuyableAmount(this.layer, this.id)}/100\nEffect: ${format(this.effect())}x`
+            },
+            canAfford() {
+                return player.p.points.gte(this.cost()) && getBuyableAmount(this.layer, this.id).lt(this.purchaseLimit)
+            },
+            buy() {
+                player.p.points = player.p.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            }
+        }
+    },
+    update(diff) {
+        if (hasMilestone('m', 4)) {
+            if (layers.p.buyables[11].canAfford()) {
+                layers.p.buyables[11].buy()
+            }
+        }
+    },
+    hotkeys: [
+        {key: "p", description: "P: Poop to feed some flies", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasMilestone("f",3)}
+})
+
+addLayer("m", {
+    name: "metabolism", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "M", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0)
+    }},
+    color: "#0eac00",
+    requires: new Decimal("1e5"), // Can be a function that takes requirement increases into account
+    resource: "enzymes", // Name of prestige currency
+    baseResource: "poop", // Name of resource prestige is based on
+    baseAmount() {return player.p.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.3, // Prestige currency exponent
+    branches: ["f"],
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1);
+        if(hasUpgrade("m", 21)) mult = mult.times(2);
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    // effect() {
+	// 	return player.p.points.add(1).pow(0.9)
+	// },
+	// effectDescription() {
+	// 	return "which are boosting flies eaten by "+format(tmp.p.effect) + "x"
+	// },
+    // passiveGeneration(){return hasMilestone("f",1)},
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+
+    addPoints(gain) {
+        player.m.points = player.m.points.add(gain)
+        player.m.total = player.m.total.add(gain)
+    },
+
+    milestones: {
+        1: {
+            requirementDescription:"1 Total Enzyme",
+            effectDescription: "Gain 100% of wings on reset, You've been waiting for this",
+            done() {return player.m.total.gte(1)},
+        },
+        2: {
+            requirementDescription:"3 Total Enzyme",
+            effectDescription: "Autobuy Wings upgrades",
+            done() {return player.m.total.gte(3)},
+            unlocked() { return hasMilestone("m",1) },
+        },
+        3: {
+            requirementDescription:"5 Total Enzyme",
+            effectDescription: "Buy Max Fly Farms",
+            done() {return player.m.total.gte(5)},
+            unlocked() { return hasMilestone("m",2) },
+        },
+        4: {
+            requirementDescription:"25 Total Enzyme",
+            effectDescription: "Autobuy Poop buyable",
+            done() {return player.m.total.gte(25)},
+            unlocked() { return hasMilestone("m",3) },
+        },
+        5: {
+            requirementDescription:"400 Total Enzyme",
+            effectDescription: "Keep Farms Milestones and upgrades on reset",
+            done() {return player.m.total.gte(400)},
+            unlocked() { return hasMilestone("m",4) },
+        },
+    },
+
+    upgrades:{
+        11: {
+            title: "Protease",
+            description: "10x Flies, 5x wings, 2x Poop",
+            cost: new Decimal(1),
+        },
+        12: {
+            title: "Amilase",
+            description: "Total enzymes boost flies eaten",
+            effect() {
+                return player.m.total.add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(2),
+            unlocked() { return hasUpgrade("m", 11) },
+        },
+        13: {
+            title: "Chitinase",
+            description: "Total enzymes boost poop",
+            effect() {
+                return player.m.total.add(1).pow(0.4)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(4),
+            unlocked() { return hasUpgrade("m", 12) },
+        },
+        14: {
+            title: "Lipase",
+            description: "Total Enzymes boost wings",
+            effect() {
+                return player.m.total.add(1).pow(0.6)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(8),
+            unlocked() { return hasUpgrade("m", 13) },
+        },
+        21: {
+            title: "Pepsin",
+            description: "2x Enzymes",
+            cost: new Decimal(20),
+            unlocked() { return hasUpgrade("m", 14) },
+        },
+        22: {
+            title: "Lactase",
+            description: "5x Poop",
+            cost: new Decimal(50),
+            unlocked() { return hasUpgrade("m", 21) },
+        },
+        23: {
+            title: "Trypsin",
+            description: "Reduce Farm requirements based on enzymes",
+            cost: new Decimal(200),
+            effect() {
+                return player.m.points.add(1).pow(0.4)
+            },
+            effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id))+"x" }, 
+            unlocked() { return hasUpgrade("m", 22) },
+        },
+        24: {
+            title: "Sucrase",
+            description: "Poop boosts wings",
+            cost: new Decimal(1000),
+            effect() {
+                return player.p.points.add(1).pow(0.1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            unlocked() { return hasUpgrade("m", 23) },
+        },
+        31: {
+            title: "Papain",
+            description: "Endgame for now. But be ready for ??? It's just the beginning...",
+            cost: new Decimal("1e4"),
+            unlocked() { return hasUpgrade("m", 24) },
+        },
+        
+    },
+
+
+    hotkeys: [
+        {key: "m", description: "M: Digest your flies for enzymes", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return player.p.unlocked},
 })

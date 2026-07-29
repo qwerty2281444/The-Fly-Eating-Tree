@@ -17,9 +17,9 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>v0.1</h3><br>
+		- Added Game<br>
+		- Added 4 Layers.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -49,6 +49,11 @@ function getPointGen() {
 	if (hasUpgrade('w', 23)) gain = gain.times(upgradeEffect('w', 23))
 	if (hasUpgrade('w', 24)) gain = gain.times(upgradeEffect('w', 24))
 	if (hasMilestone('f',1)) gain = gain.times(4)
+	gain = gain.times(player.p.points.add(1).pow(0.9))
+	if (hasUpgrade('f', 11)) gain = gain.times(upgradeEffect('f', 11))
+    gain = gain.times(buyableEffect('p', 11))
+	if (hasUpgrade('m', 12)) gain = gain.times(upgradeEffect("m",12));
+	if (hasUpgrade('m', 11)) gain = gain.times(10)
 	return gain
 }
 
