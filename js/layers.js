@@ -479,5 +479,5 @@ addLayer("m", {
     hotkeys: [
         {key: "m", description: "M: Digest your flies for enzymes", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return hasMilestone('f', 5) && player.m.total.gte(1)},
+    layerShown(){return hasMilestone('f', 5) || player.m.total.gte(1)},
 })
