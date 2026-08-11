@@ -414,7 +414,7 @@ addLayer("p", {
         }
     },
     hotkeys: [
-        {key: "p", description: "P: Poop to feed some flies", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "p", description: "P: Make compost to feed some flies", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return hasMilestone("f",3)}
 })
