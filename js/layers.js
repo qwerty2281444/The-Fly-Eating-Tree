@@ -314,7 +314,7 @@ addLayer("p", {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#351e00",
+    color: "#472900",
     requires: new Decimal("1e4"), // Can be a function that takes requirement increases into account
     resource: "poop", // Name of prestige currency
     baseResource: "wings", // Name of resource prestige is based on
