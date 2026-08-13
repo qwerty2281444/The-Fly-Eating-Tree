@@ -747,7 +747,7 @@ addLayer("m", {
         52: {
             title: "Glycogen",
             description: "Farms boost poop further",
-            cost: new Decimal("1e95"),
+            cost: new Decimal("1e93"),
             effect() {
                 return player.f.points.add(1).pow(5)
             },
@@ -757,7 +757,7 @@ addLayer("m", {
         53: {
             title: "Titin",
             description: "Habitats boost poop",
-            cost: new Decimal("1e120"),
+            cost: new Decimal("1e119"),
             effect() {
                 return player.f.points.add(1).pow(7)
             },
@@ -767,9 +767,9 @@ addLayer("m", {
         54: {
             title: "HCl",
             description: "Farm reduce their own requirement",
-            cost: new Decimal("1e139"),
+            cost: new Decimal("4e137"),
             effect() {
-                return player.f.points.add(1).pow(27)
+                return player.f.points.add(1).pow(29)
             },
             effectDisplay() { return format(this.effect())+"x" }, 
             unlocked() { return hasUpgrade("m", 53) },
@@ -787,7 +787,7 @@ addLayer("m", {
         62: {
             title: "Antiprotease",
             description: "Farms boost Poop",
-            cost: new Decimal("3e159"),
+            cost: new Decimal("5e158"),
             effect() {
                 return player.f.points.add(1).pow(20)
             },
@@ -797,7 +797,7 @@ addLayer("m", {
         63: {
             title: "Antilipase",
             description: "Enzymes boost flies",
-            cost: new Decimal("5e188"),
+            cost: new Decimal("1e188"),
             effect() {
                 return player.m.points.add(1).pow(0.3)
             },
@@ -807,7 +807,7 @@ addLayer("m", {
         64: {
             title: "Antiamilase",
             description: "Enzymes boost itself at a super reduced rate",
-            cost: new Decimal("2e196"),
+            cost: new Decimal("2e195"),
             effect() {
                 return player.m.points.add(1).pow(0.05)
             },
@@ -989,8 +989,8 @@ addLayer("h", {
             name: "Volcano",
             challengeDescription: "Extreme pressure and magma. ^0.05 Flies,  ^0.1 Wings,Poop",
             unlocked() { return player.h.points.gte(17) },
-            goalDescription: "Reach 2e34 Wings",
-            canComplete() { return player.w.points.gte("2e34") },
+            goalDescription: "Reach 5e33 Wings",
+            canComplete() { return player.w.points.gte("5e33") },
             rewardDescription: "Unlock Evolution reset at 1.79e308 Enzymes. ^1.05 Flies",
             rewardEffect() { return new Decimal(1.05) },
         },
