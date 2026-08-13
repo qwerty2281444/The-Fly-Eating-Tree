@@ -16,11 +16,15 @@ addLayer("w", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade('w', 14)) mult = mult.times(upgradeEffect('w', 14))
-        if (hasUpgrade('w', 21)) mult = mult.times(2)
+        if (hasUpgrade('w', 21)) mult = mult.times(2);
         if (hasMilestone('f',2) && !inChallenge('h', 12)) mult = mult.times(3)
         if (hasUpgrade('m',11)) mult = mult.times(5)
         if (hasUpgrade('m', 14)&& !inChallenge('h', 31)) mult = mult.times(upgradeEffect('m', 14));
         if (hasUpgrade('m', 24)&& !inChallenge('h', 31)) mult = mult.times(upgradeEffect('m', 24));
+        mult = mult.times(Decimal.pow(6, player.v.points));
+        if (hasUpgrade('e', 11)) mult = mult.times(100);
+        if (hasUpgrade('f', 23)) mult = mult.times(upgradeEffect('f', 23));
+        if (hasUpgrade('e', 31)) mult = mult.times(upgradeEffect('e', 31));
         if (hasChallenge('h', 11)) {
             mult = mult.pow(challengeEffect('h', 11))
         }
@@ -31,14 +35,17 @@ addLayer("w", {
         if (inChallenge('h', 31)) {
             mult = mult.pow(0.5)
         };
+        if (inChallenge('h', 42)) {
+            mult = mult.pow(0.1)
+        };
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    passiveGeneration(){if (hasMilestone('f',4) && !hasMilestone('m',1)){
+    passiveGeneration(){if (hasMilestone('f',4) && !hasMilestone('m',1) && !hasUpgrade('e',11)){
         return 0.01
-    } else if(hasMilestone('m',1)){
+    } else if(hasMilestone('m',1) || hasUpgrade('e',11)){
         return 1
     }
     return 0},
@@ -52,6 +59,7 @@ addLayer("w", {
         let keep = [];
 
         if(hasMilestone('p',1)) keep.push("upgrades");
+        if(hasUpgrade('e',11)) keep.push("upgrades");
 
         if(layers[resettingLayer].row > this.row) {
             layerDataReset("w",keep)
@@ -174,6 +182,14 @@ addLayer("f", {
         if (hasUpgrade("f", 15)) {
             mult = mult.div(upgradeEffect("f", 15))
         }
+        if (hasUpgrade("m", 54)) {
+            mult = mult.div(upgradeEffect("m", 54))
+        }
+        if (hasUpgrade("m", 61)) {
+            mult = mult.div(upgradeEffect("m", 61))
+        }
+        if (hasUpgrade('e', 11)) mult = mult.div(100);
+        mult = mult.div(Decimal.pow(6, player.v.points));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -183,8 +199,8 @@ addLayer("f", {
         return hasMilestone('m', 3)
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
-    autoPrestige(){return hasChallenge('h', 12)},
-    resetsNothing(){return hasChallenge('h', 12)},
+    autoPrestige(){return hasChallenge('h', 12) || hasUpgrade('e',11)},
+    resetsNothing(){return hasChallenge('h', 12) || hasUpgrade('e',11)},
 
     milestones : {
         1: {
@@ -222,6 +238,8 @@ addLayer("f", {
 
         if(hasMilestone('m',5)) keep.push("upgrades");
         if(hasMilestone('m',5)) keep.push("milestones");
+        if(hasUpgrade('e',11)) keep.push("upgrades");
+        if(hasUpgrade('e',11)) keep.push("milestones");
 
         if(layers[resettingLayer].row > this.row) {
             layerDataReset("f",keep)
@@ -299,6 +317,36 @@ addLayer("f", {
             cost: new Decimal(47),
             unlocked() { return hasUpgrade("f",21) },
         },
+        23:{
+            title: "Hybrid flies",
+            description: "Flies boost wings further",
+            effect() {
+                return player.points.add(1).pow(0.03)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(66),
+            unlocked() { return hasUpgrade("f",22) },
+        },
+        24:{
+            title: "Overcrowded flies",
+            description: "Flies boost itself further",
+            effect() {
+                return player.points.add(1).pow(0.027)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(71),
+            unlocked() { return hasUpgrade("f",23) },
+        },
+        25:{
+            title: "Fat flies",
+            description: "Habitats Boost Poop",
+            effect() {
+                return player.h.points.add(1).pow(30)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(74),
+            unlocked() { return hasUpgrade("f",24) },
+        },
     },
     hotkeys: [
         {key: "f", description: "f: Make a fly farm", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -314,7 +362,7 @@ addLayer("p", {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#472900",
+    color: "#613901",
     requires: new Decimal("1e4"), // Can be a function that takes requirement increases into account
     resource: "poop", // Name of prestige currency
     baseResource: "wings", // Name of resource prestige is based on
@@ -331,8 +379,19 @@ addLayer("p", {
         if (hasUpgrade('m', 24)) mult = mult.times(upgradeEffect("m",24));
         if (hasChallenge('h', 21)) mult = mult.pow(1.02);
         if (hasUpgrade('f', 22)) mult = mult.times(upgradeEffect("f",22));
+        mult = mult.times(Decimal.pow(6, player.v.points));
+        if (hasUpgrade('m', 52)) mult = mult.times(upgradeEffect("m",52));
+        if (hasUpgrade('m', 53)) mult = mult.times(upgradeEffect("m",53));
+        if(hasMilestone('v',3)) mult = mult.times(milestoneEffect("v",3));
+        if (hasUpgrade('m', 62)) mult = mult.times(upgradeEffect("m",62));
+        if (hasUpgrade('f', 25)) mult = mult.times(upgradeEffect("f",25));
+        if (hasUpgrade('m', 71)) mult = mult.times(upgradeEffect("m",71));
+        if (hasUpgrade('e', 11)) mult = mult.times(100);
         if (inChallenge('h', 31)) {
             mult = mult.pow(0.5)
+        };
+        if (inChallenge('h', 42)) {
+            mult = mult.pow(0.1)
         };
         return mult
     },
@@ -341,12 +400,18 @@ addLayer("p", {
     },
     effect() {
         if(!inChallenge('h', 21) && !inChallenge('h',41)){
-            return player.p.points.add(1).pow(0.9)
+            let eff = player.p.points.add(1).pow(0.9);
+            
+            eff = softcap(eff,new Decimal("1e278"),0.4);
+            return eff
         }
 		
 	},
 	effectDescription() {
         if(!inChallenge('h', 21) && !inChallenge('h',41)){
+            if(player.p.points.gte("1.79e308")){
+                return "which are boosting flies eaten by "+format(tmp.p.effect) + "x (softcapped)"
+            };
             return "which are boosting flies eaten by "+format(tmp.p.effect) + "x"
         } else {
             if(inChallenge('h', 21)) {
@@ -358,7 +423,7 @@ addLayer("p", {
         }
 		
 	},
-    passiveGeneration(){return hasChallenge("h",21)},
+    passiveGeneration(){return hasChallenge("h",21) || hasUpgrade('e',11)},
     row: 1, // Row the layer is in on the tree (0 is the first row)
 
     milestones: {
@@ -413,6 +478,14 @@ addLayer("p", {
             }
         }
     },
+    doReset(resettingLayer) {
+        let keep = [];
+        if(hasUpgrade('e',11)) keep.push("milestones");
+
+        if(layers[resettingLayer].row > this.row) {
+            layerDataReset("p",keep)
+        }
+    },
     hotkeys: [
         {key: "p", description: "P: Make compost to feed some flies", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
@@ -446,9 +519,16 @@ addLayer("m", {
             mult = mult.times(10)
         };
         if(hasUpgrade('m', 44)) mult = mult.times(upgradeEffect("m",44));
+        if(hasMilestone('v',2)) mult = mult.times(milestoneEffect("v",2));
+        mult = mult.times(Decimal.pow(6, player.v.points));
+        if(hasUpgrade('m', 64)) mult = mult.times(upgradeEffect("m",64));
         if(hasChallenge('h', 32)) mult = mult.pow(1.01);
+        if(hasUpgrade("m", 72)) mult = mult.times(1e7);
+        if (hasUpgrade('e', 11)) mult = mult.times(100);
+        if (hasUpgrade('e', 22)) mult = mult.times(upgradeEffect("e",22));
         return mult
     },
+    
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
@@ -490,7 +570,7 @@ addLayer("m", {
         },
         4: {
             requirementDescription:"25 Total Enzyme",
-            effectDescription: "Autobuy Poop buyable",
+            effectDescription: "Autobuy Poop buyable, Don't buy it when it's automated",
             done() {return player.m.total.gte(25)},
             unlocked() { return hasMilestone("m",3) },
         },
@@ -518,7 +598,9 @@ addLayer("m", {
             title: "Amilase",
             description: "Total enzymes boost flies eaten",
             effect() {
-                return player.m.total.add(1)
+                let eff = player.m.total.add(1)
+                eff = softcap(eff,new Decimal(1e100),0.4)
+                return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
             cost: new Decimal(2),
@@ -662,6 +744,92 @@ addLayer("m", {
             cost: new Decimal("1e40"),
             unlocked() { return hasUpgrade("m", 44) },
         },
+        52: {
+            title: "Glycogen",
+            description: "Farms boost poop further",
+            cost: new Decimal("1e95"),
+            effect() {
+                return player.f.points.add(1).pow(5)
+            },
+            effectDisplay() { return format(player.f.points.add(1).pow(5))+"x" }, 
+            unlocked() { return hasMilestone("v", 1) },
+        },
+        53: {
+            title: "Titin",
+            description: "Habitats boost poop",
+            cost: new Decimal("1e120"),
+            effect() {
+                return player.f.points.add(1).pow(7)
+            },
+            effectDisplay() { return format(player.f.points.add(1).pow(7))+"x" }, 
+            unlocked() { return hasUpgrade("m", 52) },
+        },
+        54: {
+            title: "HCl",
+            description: "Farm reduce their own requirement",
+            cost: new Decimal("1e139"),
+            effect() {
+                return player.f.points.add(1).pow(27)
+            },
+            effectDisplay() { return format(this.effect())+"x" }, 
+            unlocked() { return hasUpgrade("m", 53) },
+        },
+        61: {
+            title: "Catalase",
+            description: "Poop reduces farms requirements",
+            cost: new Decimal("1e158"),
+            effect() {
+                return player.p.points.add(1).pow(0.1)
+            },
+            effectDisplay() { return format(this.effect())+"x" }, 
+            unlocked() { return hasUpgrade("m", 54) },
+        },
+        62: {
+            title: "Antiprotease",
+            description: "Farms boost Poop",
+            cost: new Decimal("3e159"),
+            effect() {
+                return player.f.points.add(1).pow(20)
+            },
+            effectDisplay() { return format(this.effect())+"x" }, 
+            unlocked() { return hasUpgrade("m", 61) },
+        },
+        63: {
+            title: "Antilipase",
+            description: "Enzymes boost flies",
+            cost: new Decimal("5e188"),
+            effect() {
+                return player.m.points.add(1).pow(0.3)
+            },
+            effectDisplay() { return format(this.effect())+"x" }, 
+            unlocked() { return hasUpgrade("m", 62) },
+        },
+        64: {
+            title: "Antiamilase",
+            description: "Enzymes boost itself at a super reduced rate",
+            cost: new Decimal("2e196"),
+            effect() {
+                return player.m.points.add(1).pow(0.05)
+            },
+            effectDisplay() { return format(this.effect())+"x" }, 
+            unlocked() { return hasUpgrade("m", 63) },
+        },
+        71: {
+            title: "Antiachitinase",
+            description: "Enzymes boost poop at a reduced rate",
+            cost: new Decimal("2e251"),
+            effect() {
+                return player.m.points.add(1).pow(0.15)
+            },
+            effectDisplay() { return format(this.effect())+"x" }, 
+            unlocked() { return hasUpgrade("m", 64) },
+        },
+        72: {
+            title: "Evolutinaze",
+            description: "x1e7 enzymes",
+            cost: new Decimal("1e300"),
+            unlocked() { return hasUpgrade("m", 71) },
+        },
         
     },
 
@@ -704,6 +872,9 @@ addLayer("h", {
 	// },
     // passiveGeneration(){return hasMilestone("f",1)},
     row: 2, // Row the layer is in on the tree (0 is the first row)
+    canBuyMax() {
+        return hasUpgrade('e', 22)
+    },
 
     milestones: {
         1: {
@@ -747,12 +918,12 @@ addLayer("h", {
             done() {return player.h.points.gte(7)},
             unlocked() { return player.h.points.gte(6) },
         },
-        // 8: {
-        //     requirementDescription:"9 Habitats",
-        //     effectDescription: "Unlock Volcano Challenge, ",
-        //     done() {return player.h.points.gte(9)},
-        //     unlocked() { return player.h.points.gte(7) },
-        // },
+        8: {
+            requirementDescription:"17 Habitats",
+            effectDescription: "Unlock Volcano Challenge, Last challenge before Evolution",
+            done() {return player.h.points.gte(17)},
+            unlocked() { return player.h.points.gte(7) },
+        },
     },
 
     challenges: {
@@ -812,7 +983,16 @@ addLayer("h", {
             unlocked() { return player.h.points.gte(7) },
             goalDescription: "Reach 1e80 Wings",
             canComplete() { return player.w.points.gte(1e80) },
-            rewardDescription: "Unlock Varieties of Flies ENDGAME!",
+            rewardDescription: "Unlock Varieties of Flies",
+        },
+        42: {
+            name: "Volcano",
+            challengeDescription: "Extreme pressure and magma. ^0.05 Flies,  ^0.1 Wings,Poop",
+            unlocked() { return player.h.points.gte(17) },
+            goalDescription: "Reach 2e34 Wings",
+            canComplete() { return player.w.points.gte("2e34") },
+            rewardDescription: "Unlock Evolution reset at 1.79e308 Enzymes. ^1.05 Flies",
+            rewardEffect() { return new Decimal(1.05) },
         },
     },
 
@@ -821,4 +1001,235 @@ addLayer("h", {
         {key: "h", description: "H: Move to another habitat", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return hasMilestone('m', 6) || player.h.points.gte(1)},
+})
+
+addLayer("v", {
+    name: "varieties", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "V", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "rgb(196, 183, 7)",
+    branches: ["p"],
+    requires: new Decimal("50"), // Can be a function that takes requirement increases into account
+    resource: "varieties", // Name of prestige currency
+    baseResource: "farms", // Name of resource prestige is based on
+    baseAmount() {return player.f.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1, // Prestige currency exponent
+    base: 1.149,
+    gainMult() {
+        let mult = new Decimal(1);
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    effect() {
+        return Decimal.pow(6, player.v.points)
+    },
+    effectDescription() {
+        return `which are boosting flies,wings,poop,enzymes and divide requirements for farms by ${format(this.effect())}x.`
+    },
+    // canBuyMax() {
+    //     return hasMilestone('m', 3)
+    // },
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    milestones: {
+        1: {
+            requirementDescription: "1 Variety: Fruit Fly",
+            done() { return player.v.points.gte(1) },
+            effectDescription: "Fruit Flies give you new enzyme upgrades",
+        },
+        2: {
+            requirementDescription: "2 Variety: House Fly",
+            done() { return player.v.points.gte(2) },
+            effect() {return player.points.add(1).log(20)},
+            effectDescription() {
+                return `Makes flies boost enzymes at super-reduced rate: x${format(this.effect())}x`
+            },
+            unlocked() { return player.v.points.gte(1) },
+        },
+        3: {
+            requirementDescription: "3 Variety: Botfly",
+            done() { return player.v.points.gte(3) },
+            effect() {return player.p.points.add(1).pow(0.04)},
+            effectDescription() {
+                return `Poop boosts itself at a reduced rate ${format(this.effect())}x`
+            },
+            unlocked() { return player.v.points.gte(2) },
+        },
+        4: {
+            requirementDescription: "4 Variety: Blow fly",
+            done() { return player.v.points.gte(4) },
+            effect() {return player.m.points.add(1).pow(0.1)},
+            effectDescription() {
+                return `Enzymes boosts flies at a reduced rate ${format(this.effect())}x`
+            },
+            unlocked() { return player.v.points.gte(3) },
+        },
+
+    },
+    hotkeys: [
+        {key: "v", description: "v: Diverse flies", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasChallenge("h",41)},
+})
+
+addLayer("e", {
+    name: "evolution", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "E", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        total: new Decimal(0)
+    }},
+    color: "#b300b3",
+    requires: new Decimal("1.79e308"), // Can be a function that takes requirement increases into account
+    resource: "DNA", // Name of prestige currency
+    baseResource: "enzymes", // Name of resource prestige is based on
+    baseAmount() {return player.m.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.01, // Prestige currency exponent
+    branches: ["m","h","v"],
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1);
+        if (hasUpgrade('e', 32)) mult = mult.times(2);
+        return mult
+    },
+    
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    // effect() {
+	// 	return player.p.points.add(1).pow(0.9)
+	// },
+	// effectDescription() {
+	// 	return "which are boosting flies eaten by "+format(tmp.p.effect) + "x"
+	// },
+    // passiveGeneration(){return hasMilestone("f",1)},
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    // tabFormat: [
+    //     "main-display",
+    //     "prestige-button",
+    //     "blank",
+    //     ["display-text", function() { return `You have <h3>${format(player.e.points)}</h3> DNA` }],
+    //     "blank",
+    //         "upgrades", 
+    //         [
+    //             ["", 11, ""],
+    //             ["blank", "20px"],
+    //             [21, "", 22], 
+    //             ["blank", "20px"],
+    //             [31, "", 32] 
+    //         ]
+    // ],
+
+    milestones: {},
+
+    upgrades:{
+        11: {
+            title: "The start of Evolution",
+            description: "Keep Upgrades and Milestones and generators of Wings,Poop,Farms, 100x Flies,Wings,Poop,Enzymes, ^1.02 Flies",
+            cost: new Decimal(1),
+            unlocked() {return true},
+            style: {
+                "margin-bottom": "30px",
+            }
+        },
+        21: {
+            title: "Insectoids",
+            description: "Total DNA boosts Flies",
+            cost: new Decimal(2),
+            unlocked() {return hasUpgrade("e", 11)},
+            effect() {
+                let eff = player.e.total.add(1).pow(4)
+                return eff
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            branches: ["11"],
+            style: {
+                "margin-right": "30px",
+                "margin-bottom": "30px",
+            }
+        },
+        22: {
+            title: "Mitosis",
+            description: "Total DNA boosts Enzymes, + Buy max Habitats",
+            effect() {
+                let eff = player.e.total.add(1).pow(1.5)
+                return eff
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            cost: new Decimal(1),
+            unlocked() {return hasUpgrade("e", 11);},
+            branches: ["11"],
+            style: {
+                "margin-bottom": "30px",
+                "margin-right": "30px",
+            }
+        },
+        31: {
+            title: "Light wings",
+            description: "Enzymes Boost Wings",
+            cost: new Decimal(2),
+            unlocked() {return hasUpgrade("e", 21)},
+            effect() {
+                let eff = player.m.total.add(1).pow(0.1)
+                return eff
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            branches: ["21"],
+            style: {
+                "margin-right": "30px",
+                "margin-bottom": "30px",
+            }
+        },
+        32: {
+            title: "Meiosis",
+            description: "2x DNA",
+            cost: new Decimal(2),
+            unlocked() {return hasUpgrade("e", 21) && hasUpgrade("e", 22)},
+            branches: ["21","22"],
+            style: {
+                "margin-right": "30px",
+                "margin-bottom": "30px",
+            }
+        },
+        33: {
+            title: "Crustaceans",
+            description: "Habitats Boost Flies",
+            cost: new Decimal(2),
+            unlocked() {return hasUpgrade("e", 21) && hasUpgrade("e", 22)},
+            effect() {
+                let eff = player.h.total.add(1).pow(20)
+                return eff
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+            branches: ["22"],
+            style: {
+                "margin-right": "30px",
+                "margin-bottom": "30px",
+            }
+        },
+        41: {
+            title: "ENDGAME",
+            description: "Thanks for playing! More will come here",
+            cost: new Decimal(10),
+            unlocked() {return hasUpgrade("e", 31) && hasUpgrade("e", 32) && hasUpgrade("e",33)},
+            branches: ["31","32","33"],
+            style: {
+                "margin-right": "30px",
+                "margin-bottom": "30px",
+            }
+        },
+
+    },
+    hotkeys: [
+        {key: "e", description: "E: Evolve for DNA", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasChallenge('h', 42) || player.e.total.gte(1)},
 })

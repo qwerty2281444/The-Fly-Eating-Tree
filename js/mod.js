@@ -3,20 +3,30 @@ let modInfo = {
 	author: "THE ABSOLUTE OF FLIES aka Myxoedema",
 	pointsName: "Flies",
 	modFiles: ["layers.js", "tree.js"],
+	get pointsName() {
+        let gain = getPointGen()
+        if (gain.gte("1e1000")) {
+            return "Flies (softcapped)"
+        }
+        return "Flies"
+    },
 
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	offlineLimit: 3600,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
-	name: "Exploring new habitats",
+	num: "0.3",
+	name: "Diversing and Evolving",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.3</h3><br>
+		- Added 2 Layers and more content.
+		<br>
 	<h3>v0.2</h3><br>
 		- Added 1 Layer and more content.
 		<br>
@@ -74,6 +84,11 @@ function getPointGen() {
 	if (hasUpgrade('m', 32)) gain = gain.times(upgradeEffect('m',32));
 	if (hasUpgrade('f', 14)) gain = gain.times(upgradeEffect('f',14));
 	if (hasUpgrade('f', 21)) gain = gain.times(upgradeEffect('f', 21));
+	gain = gain.times(Decimal.pow(6, player.v.points));
+	if (hasUpgrade('f', 24)) gain = gain.times(upgradeEffect('f',24));
+	if (hasUpgrade('m', 63)) gain = gain.times(upgradeEffect('m',63));
+	if (hasMilestone('v', 4)) gain = gain.times(milestoneEffect('v',4));
+	
 	if (inChallenge('h', 11)) {
         gain = gain.pow(0.75)
     };
@@ -86,6 +101,9 @@ function getPointGen() {
 	if (hasChallenge('h', 22)) {
         gain = gain.pow(challengeEffect('h', 22))
     };
+	if(hasChallenge('h',42)){
+		gain = gain.pow(1.05)
+	}
 	if (inChallenge('h', 31)) {
         gain = gain.pow(0.5)
     };
@@ -95,6 +113,16 @@ function getPointGen() {
 	if (inChallenge('h', 41)) {
         gain = gain.pow(0.2)
     };
+	if (inChallenge('h', 42)) {
+        gain = gain.pow(0.05)
+    };
+	if (hasUpgrade('e', 11)) gain = gain.times(100);
+	if (hasUpgrade('e', 11)) mult = mult.pow(1.02);
+	if (hasUpgrade('e', 21)) gain = gain.times(upgradeEffect('e',21));
+	if (hasUpgrade('e', 33)) gain = gain.times(upgradeEffect('e',33));
+	
+	gain = softcap(gain,new Decimal("1e1000"),0.5)
+	
 	return gain
 }
 
@@ -104,6 +132,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	
 ]
 
 // Determines when the game "ends"
