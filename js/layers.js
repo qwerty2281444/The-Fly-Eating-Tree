@@ -2095,7 +2095,7 @@ addLayer("vi", {
             let current = player.vi.virions
 
             if (current.gte("1e1000")) {
-                mult = mult.pow(0.03)
+                mult = mult.pow(0.01)
             }else if (current.gte("1.79e308")) {
                 mult = mult.pow(0.1)
             } else if (current.gte("1e100")) {
@@ -2417,3 +2417,86 @@ addLayer("vi", {
         {key: "i", description: "I: Get new virus strain", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
 })
+
+// addLayer("s", {
+//     name: "symbiosis", // This is optional, only used in a few places, If absent it just uses the layer id.
+//     symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
+//     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+//     startData() {
+//         return {
+//             unlocked: false,
+//             points: new Decimal(0),
+//             nutrients: new Decimal(0), 
+//         }
+//     },
+//     color: "#51fd93",
+//     requires: new Decimal("1e95"), // Can be a function that takes requirement increases into account
+//     resource: "symbionts", // Name of prestige currency
+//     baseResource: "DNA", // Name of resource prestige is based on
+//     baseAmount() {return player.e.points}, // Get the current amount of baseResource
+//     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+//     exponent: 1.4, // Prestige currency exponent
+//     branches: ["u","vi"],
+//     base:1e20,
+//     gainMult() { // Calculate the multiplier for main currency from bonuses
+//         let mult = new Decimal(1);
+//         return mult
+//     },
+
+//     nutGain() {
+//         let level = player.s.points;
+//         if (level.lte(0)) return new Decimal(0);
+        
+//         let rate = Decimal.pow(10, level.sub(1));
+
+//         return rate
+//     },
+    
+//     gainExp() { // Calculate the exponent on main currency from bonuses
+//         return new Decimal(1)
+//     },
+//     // effect() {
+// 	// 	return player.p.points.add(1).pow(0.9)
+// 	// },
+// 	// effectDescription() {
+// 	// 	return "which are boosting flies eaten by "+format(tmp.p.effect) + "x"
+// 	// },
+//     // passiveGeneration(){return hasMilestone("f",1)},
+//     row: 4, // Row the layer is in on the tree (0 is the first row)
+
+//     update(diff) {
+//         if (player.s.unlocked) {
+//             player.s.nutrients = player.s.nutrients.add(this.nutGain().mul(diff))
+//         }
+//     },
+
+//     tabFormat: [
+//         "main-display",
+//         "prestige-button",
+//         "blank",
+//         ["display-text", function() {
+//             return `You have <h2 style='color: #2be296;'>${format(player.s.nutrients)}</h2> Shared Nutrients
+//                     <br><small>(+${format(layers.s.nutGain())}/sec based on Symbionts)</small>`
+//         }],
+//         "blank",
+//         "milestones",
+//         "blank",
+//         "upgrades",
+//     ],
+    
+
+//     milestones: {
+//         1: {
+//             requirementDescription: "First symbiont",
+//             done() { return player.s.points.gte(1) },
+//             effectDescription: "A symbiont keeps your flies,farms,poop,enzymes automation, Good for start",
+//         },
+//     },
+
+//     upgrades:{
+//     },
+//     hotkeys: [
+//         {key: "s", description: "S: make a symbiosis with something", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+//     ],
+//     layerShown(){return hasUpgrade('e', 112) || player.s.points.gte(1)},
+// })
