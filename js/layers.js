@@ -27,6 +27,8 @@ addLayer("w", {
         if (hasUpgrade('e', 31)) mult = mult.times(upgradeEffect('e', 31));
         if (hasUpgrade('u', 23)) mult = mult.times(upgradeEffect('u', 23));
         if (hasUpgrade('vi', 26)) mult = mult.times(upgradeEffect('vi', 26));
+        if (hasUpgrade('s', 12)) mult = mult.times(upgradeEffect('s', 12));
+        if (hasUpgrade('f', 31)) mult = mult.times("1e300");
         if (hasChallenge('h', 11)) {
             mult = mult.pow(challengeEffect('h', 11))
         }
@@ -45,16 +47,16 @@ addLayer("w", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    passiveGeneration(){if (hasMilestone('f',4) && !hasMilestone('m',1) && !hasUpgrade('e',11)){
+    passiveGeneration(){if (hasMilestone('f',4) && !hasMilestone('m',1) && !hasUpgrade('e',11) && !hasMilestone('s',1)){
         return 0.01
-    } else if(hasMilestone('m',1) || hasUpgrade('e',11)){
+    } else if(hasMilestone('m',1) || hasUpgrade('e',11) || hasMilestone('s',1)){
         return 1
     }
     return 0},
     row: 0, // Row the layer is in on the tree (0 is the first row)
 
     autoUpgrade(){
-        return hasMilestone('m', 2)
+        return hasMilestone('m', 2) || hasMilestone('s',1)
     },
 
     doReset(resettingLayer) {
@@ -62,6 +64,7 @@ addLayer("w", {
 
         if(hasMilestone('p',1)) keep.push("upgrades");
         if(hasUpgrade('e',11)) keep.push("upgrades");
+        if(hasMilestone('s',1)) keep.push("upgrades");
 
         if(layers[resettingLayer].row > this.row) {
             layerDataReset("w",keep)
@@ -146,6 +149,15 @@ addLayer("w", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
             unlocked() { return hasUpgrade("w", 23) },
         },
+        31: {
+            title: "File Wings.docx Number I",
+            description: "You were bored, and you wanted a pet so you went to plant shop and saw a carnivorous plant, And you loved it from the first sight. You began to feed it with flies, 1e250x Flies",
+            cost: new Decimal("1e33600"),
+            style: {
+                "width": "300px",
+            },
+            unlocked() { return hasUpgrade("s", 36) },
+        },
 
         },
     hotkeys: [
@@ -201,8 +213,11 @@ addLayer("f", {
         return hasMilestone('m', 3)
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
-    autoPrestige(){return hasChallenge('h', 12) || hasUpgrade('e',11)},
-    resetsNothing(){return hasChallenge('h', 12) || hasUpgrade('e',11)},
+    autoPrestige(){return hasChallenge('h', 12) || hasUpgrade('e',11) || hasMilestone('s',1)},
+    resetsNothing(){return hasChallenge('h', 12) || hasUpgrade('e',11) || hasMilestone('s',1)},
+    autoUpgrade(){
+        return hasMilestone('s',1)
+    },
 
     milestones : {
         1: {
@@ -242,6 +257,7 @@ addLayer("f", {
         if(hasMilestone('m',5)) keep.push("milestones");
         if(hasUpgrade('e',11)) keep.push("upgrades");
         if(hasUpgrade('e',11)) keep.push("milestones");
+        if(hasMilestone('s',1)) keep.push("upgrades");
 
         if(layers[resettingLayer].row > this.row) {
             layerDataReset("f",keep)
@@ -349,6 +365,15 @@ addLayer("f", {
             cost: new Decimal(74),
             unlocked() { return hasUpgrade("f",24) },
         },
+        31: {
+            title: "File Farms.pdf Number II",
+            description: "Your creature began to grow, and you realized catching flies isn't enough so you began to buid fly farms your friend Claire notices it, x1e300 Wings",
+            cost: new Decimal(398),
+            style: {
+                "width": "300px",
+            },
+            unlocked() { return hasUpgrade("s", 36) },
+        },
     },
     hotkeys: [
         {key: "f", description: "f: Make a fly farm", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -398,6 +423,9 @@ addLayer("p", {
         if (hasUpgrade('vi', 13)) mult = mult.times(upgradeEffect("vi",13));
         if (hasUpgrade('vi', 22)) mult = mult.times(upgradeEffect("vi",22));
         if (hasUpgrade('e', 111)) mult = mult.times(upgradeEffect("e",111));
+        if (hasUpgrade('s', 11)) mult = mult.pow(1.02);
+        if (hasUpgrade('s', 14)) mult = mult.times(upgradeEffect("s",14));
+        if (hasUpgrade('p', 11)) mult = mult.times("1e123");
         if (inChallenge('h', 31)) {
             mult = mult.pow(0.5)
         };
@@ -434,7 +462,7 @@ addLayer("p", {
         }
 		
 	},
-    passiveGeneration(){return hasChallenge("h",21) || hasUpgrade('e',11)},
+    passiveGeneration(){return hasChallenge("h",21) || hasUpgrade('e',11) || hasMilestone('s',1)},
     row: 1, // Row the layer is in on the tree (0 is the first row)
 
     milestones: {
@@ -480,7 +508,19 @@ addLayer("p", {
                 setBuyableAmount(this.layer, this.id, targetLevel)
             }
         }
-}
+    }
+    },
+
+    upgrades: {
+        11: {
+            title: "File Poop Number II",
+            description: "Claire: Ewww your house smells like poop what in the hell are you doing with these flies, you shown her your new pet, You: Look this is my plant and It's very hungry x1e123 Poop",
+            cost: new Decimal("1e28900"),
+            style: {
+                "width": "300px",
+            },
+            unlocked() { return hasUpgrade("s", 36) },
+        },
     },
     update(diff) {
         if (hasMilestone('m', 4)) {
@@ -492,6 +532,7 @@ addLayer("p", {
     doReset(resettingLayer) {
         let keep = [];
         if(hasUpgrade('e',11)) keep.push("milestones");
+        if(hasUpgrade('s',11)) keep.push("upgrades");
 
         if(layers[resettingLayer].row > this.row) {
             layerDataReset("p",keep)
@@ -545,6 +586,10 @@ addLayer("m", {
         if (hasUpgrade('e', 84)) mult = mult.times(upgradeEffect("e",84));
         if (hasUpgrade('e', 95)) mult = mult.times(upgradeEffect("e",95));
         if (hasUpgrade('e', 104)) mult = mult.times(upgradeEffect("e",104));
+        if (hasUpgrade('s', 11)) mult = mult.pow(1.01);
+        if (hasUpgrade('s', 23)) mult = mult.times(upgradeEffect('s',23));
+        if(hasUpgrade("m", 81)) mult = mult.times(1e100);
+        if(hasUpgrade("v", 11)) mult = mult.times(1e50);
         return mult
     },
     
@@ -559,12 +604,15 @@ addLayer("m", {
 	// },
     // passiveGeneration(){return hasMilestone("f",1)},
     row: 2, // Row the layer is in on the tree (0 is the first row)
-    passiveGeneration(){if (hasChallenge('h',31) && !hasUpgrade('e',51)){
+    passiveGeneration(){if (hasChallenge('h',31) && !hasUpgrade('e',51) && hasMilestone('s',1)){
         return 0.0001
-    } else if(hasUpgrade('e',51)){
+    } else if(hasUpgrade('e',51) || hasMilestone('s',1)){
         return 1
     }
     return 0},
+    autoUpgrade(){
+        return hasMilestone('s',1)
+    },
 
     addPoints(gain) {
         player.m.points = player.m.points.add(gain)
@@ -575,6 +623,8 @@ addLayer("m", {
         let keep = [];
 
         if (hasUpgrade("e", 73)) keep.push("upgrades");
+        if (hasUpgrade("e", 73)) keep.push("milestones");
+        if(hasUpgrade('s',11)) keep.push("upgrades");
             
 
         if(layers[resettingLayer].row > this.row) {
@@ -862,6 +912,15 @@ addLayer("m", {
             cost: new Decimal("1e300"),
             unlocked() { return hasUpgrade("m", 71) },
         },
+        81: {
+            title: "File Enzymes.html Number IV",
+            description: "You had discovered enzymes, Enzymes that help your creature to digest even more flies, so you use them, But you begin to think is that too far, No you just care about growing your plant, x1e100 Enzymes",
+            cost: new Decimal("1e15980"),
+            style: {
+                "width": "300px",
+            },
+            unlocked() { return hasUpgrade("s", 36) },
+        },
         
     },
 
@@ -913,20 +972,29 @@ addLayer("h", {
     doReset(resettingLayer) {
         let keep = [];
 
-        if (resettingLayer == "e" && hasUpgrade("e", 52)) {
+        if (resettingLayer == "e" && hasUpgrade("e", 52) || hasMilestone("s", 1)) {
             keep.push("challenges");
             keep.push("challengeData");
             keep.push("milestones");
+            keep.push("upgrades");
         };
-        if (resettingLayer == "u" && hasUpgrade("e", 52)) {
+        if (resettingLayer == "u" && hasUpgrade("e", 52) || hasMilestone("s", 1)) {
             keep.push("challenges");
             keep.push("challengeData");
             keep.push("milestones");
+            keep.push("upgrades");
         };
-        if (resettingLayer == "vi" && hasUpgrade("e", 52)) {
+        if (resettingLayer == "vi" && hasUpgrade("e", 52) || hasMilestone("s", 1)) {
             keep.push("challenges");
             keep.push("challengeData");
             keep.push("milestones");
+            keep.push("upgrades");
+        };
+        if (resettingLayer == "s" && hasMilestone("s", 1)) {
+            keep.push("challenges");
+            keep.push("challengeData");
+            keep.push("milestones");
+            keep.push("upgrades");
         };
 
         if(layers[resettingLayer].row > this.row) {
@@ -934,8 +1002,8 @@ addLayer("h", {
         }
     },
 
-    autoPrestige(){return hasUpgrade('e',52)},
-    resetsNothing(){return hasUpgrade('e',52)},
+    autoPrestige(){return hasUpgrade('e',52) || hasMilestone('s',1)},
+    resetsNothing(){return hasUpgrade('e',52) || hasMilestone('s',1)},
 
     milestones: {
         1: {
@@ -1057,6 +1125,18 @@ addLayer("h", {
         },
     },
 
+    upgrades: {
+        11: {
+            title: "File HAbitats.html Number V",
+            description: "Your plant stopped growing, Why? because It wants to travel, You got your plant through different locations even threw it in volcano, It survived through everything, x1e100 flies",
+            cost: new Decimal("189"),
+            style: {
+                "width": "300px",
+            },
+            unlocked() { return hasMilestone("s", 6) },
+        }
+    },
+
 
     hotkeys: [
         {key: "h", description: "H: Move to another habitat", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -1098,8 +1178,8 @@ addLayer("v", {
     //     return hasMilestone('m', 3)
     // },
     row: 2, // Row the layer is in on the tree (0 is the first row)
-    autoPrestige(){return hasUpgrade('e',53)},
-    resetsNothing(){return hasUpgrade('e',53)},
+    autoPrestige(){return hasUpgrade('e',53) || hasUpgrade('s',23)},
+    resetsNothing(){return hasUpgrade('e',53) || hasUpgrade('s',23)},
     milestones: {
         1: {
             requirementDescription: "1 Variety: Fruit Fly",
@@ -1134,6 +1214,30 @@ addLayer("v", {
             unlocked() { return player.v.points.gte(3) },
         },
 
+    },
+
+    upgrades: {
+        11: {
+            title: "File Varities Number VI",
+            description: "You felt like one species of flies is not enough to grow your creature, x1e50 Enzymes",
+            cost: new Decimal("16"),
+            style: {
+                "width": "300px",
+            },
+            unlocked() { return hasMilestone("s", 6) },
+        }
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+
+        if (hasUpgrade("e", 73)) keep.push("upgrades");
+        if (hasUpgrade("e", 73)) keep.push("milestones");
+        if(hasUpgrade('s',11)) keep.push("upgrades");
+            
+
+        if(layers[resettingLayer].row > this.row) {
+            layerDataReset("v",keep)
+        }
     },
     hotkeys: [
         {key: "v", description: "v: Diverse flies", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -1170,6 +1274,15 @@ addLayer("e", {
         if (hasUpgrade('vi', 16)) mult = mult.times(upgradeEffect('vi',16));
         if (hasUpgrade('vi', 21)) mult = mult.times(upgradeEffect('vi',21));
         if (hasUpgrade('vi', 27)) mult = mult.times(upgradeEffect('vi',27));
+        if (hasUpgrade('s', 11)) mult = mult.times(10);
+        if (hasUpgrade('s', 15)) mult = mult.times(upgradeEffect('s',15));
+        if (hasUpgrade('s', 26)) mult = mult.times(upgradeEffect('s',26));
+        if (hasUpgrade('s', 33)) mult = mult.times(upgradeEffect('s',33));
+        if (hasUpgrade('e', 121)) mult = mult.times("1e13");
+        if (hasMilestone('s',7)) mult = mult.times("1e10");
+        if (hasUpgrade('s', 44)) mult = mult.times(1000);
+        if (hasUpgrade('s', 46)) mult = mult.times(upgradeEffect('s',46));
+        if (hasUpgrade('vi', 43)) mult = mult.times("1e5");
         return mult
     },
     
@@ -1201,6 +1314,10 @@ addLayer("e", {
     // ],
 
     milestones: {},
+    autoUpgrade(){
+        return hasMilestone('s',3)
+    },
+    passiveGeneration(){return hasMilestone('s',5)},
 
     upgrades:{
         11: {
@@ -1710,7 +1827,7 @@ addLayer("e", {
         },
         112: {
             title: "Final of Evolution tree, But evolution never ends",
-            description: "UNlock Symbiosis reset, ENDGAME!",
+            description: "UNlock Symbiosis reset",
             cost: new Decimal(1e88),
             unlocked() {return hasUpgrade("e", 111)},
             branches: ["111"],
@@ -1719,12 +1836,24 @@ addLayer("e", {
                 "margin-bottom": "30px",
             }
         },
+        121: {
+            title: "Not final lol",
+            description: "Your creature is ready to reproduce, But it died, giving you a new generation of stronger and even more fly eating creatures, Claire thinks you betrayed her for your pet, x1e13x DNA",
+            cost: new Decimal("1e303"),
+            unlocked() {return hasUpgrade("v", 11)},
+            branches: ["111","112"],
+            style: {
+                "margin-right": "30px",
+                "margin-bottom": "30px",
+                "width": "300px"
+            }
+        },
 
     },
     hotkeys: [
         {key: "e", description: "E: Evolve for DNA", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return hasChallenge('h', 42) || player.e.total.gte(1)},
+    layerShown(){return hasChallenge('h', 42) || player.e.total.gte(1) || player.m.points.gte("1e308")},
 })
 
 addLayer("u", {
@@ -1772,8 +1901,22 @@ addLayer("u", {
         if (hasUpgrade("vi", 11)) rate = rate.mul(upgradeEffect("vi", 11));
         if (hasUpgrade("e", 105)) rate = rate.mul(upgradeEffect("e", 105));
         if (hasUpgrade("vi", 23)) rate = rate.mul(upgradeEffect("vi", 23));
+        if (hasUpgrade('s', 11)) rate = rate.times(25);
+        if (hasUpgrade("s", 22)) rate = rate.mul(upgradeEffect("s", 22));
+        if (hasUpgrade("s", 36)) rate = rate.mul(upgradeEffect("s", 36));
+        if (hasUpgrade("s", 43)) rate = rate.mul(upgradeEffect("s", 43));
+        if (hasUpgrade("vi", 35)) rate = rate.mul(upgradeEffect("vi", 35));
 
         return rate
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+
+        if(hasMilestone('s',4)) keep.push("upgrades");
+
+        if(layers[resettingLayer].row > this.row) {
+            layerDataReset("u",keep)
+        }
     },
     
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -1793,6 +1936,8 @@ addLayer("u", {
             player.u.mrna = player.u.mrna.add(this.mrnaGain().mul(diff))
         }
     },
+    autoPrestige(){return hasMilestone('s',2)},
+    resetsNothing(){return hasMilestone('s',2)},
 
     tabFormat: [
         "main-display",
@@ -2046,11 +2191,13 @@ addLayer("vi", {
             points: new Decimal(0),
             virions: new Decimal(1),
             infectedFlies: new Decimal(0),
+            deadFlies: new Decimal(0),
             timer: 0,
         }
     },
 
     virionMult() {
+        if (!player.vi || !player.vi.unlocked) return new Decimal(1);
         let mult = new Decimal(1.05);
 
         let buyableLevel = getBuyableAmount("vi", 11);
@@ -2066,6 +2213,16 @@ addLayer("vi", {
         if (hasUpgrade("e", 103)) mult = mult.mul(1.2);
         if (hasUpgrade("vi", 24)) mult = mult.mul(1.3);
         if (hasUpgrade("vi", 25)) mult = mult.mul(1.35);
+        if (hasUpgrade('s', 11)) mult = mult.times(1.8);
+        if (hasUpgrade('s', 16)) mult = mult.times(1.4);
+        if (hasUpgrade('s', 22)) mult = mult.times(1.5);
+        if (hasUpgrade('s', 25)) mult = mult.times(1.6);
+        if (hasUpgrade('s', 32)) mult = mult.times(1.932);
+        if (hasUpgrade('s', 35)) mult = mult.times(1.7);
+        if (hasUpgrade('s', 42)) mult = mult.times(2);
+        if (hasUpgrade('s', 45)) mult = mult.times(2.2);
+        if (hasUpgrade('vi', 32)) mult = mult.times(2);
+        if (hasUpgrade('vi', 34)) mult = mult.times(2);
 
         mult = softcap(mult, new Decimal(1.5), 0.4, "pow");
 
@@ -2073,6 +2230,7 @@ addLayer("vi", {
     },
 
     replicationInterval() {
+        if (hasUpgrade('s',24)) return 0.07;
         let baseInterval = 2.0
         let buyableLevel = getBuyableAmount("vi", 12)
         
@@ -2081,7 +2239,7 @@ addLayer("vi", {
     },
 
     update(diff) {
-        if (!player.vi.unlocked) return
+        if (!player.vi || !player.vi.unlocked) return
 
         player.vi.timer += diff
         let interval = this.replicationInterval()
@@ -2094,53 +2252,135 @@ addLayer("vi", {
 
             let current = player.vi.virions
 
-            if (current.gte("1e1000")) {
+            if (current.gte("1e2000")) {
+                mult = mult.pow(0.004)
+            }else if (current.gte("1e1000")) {
                 mult = mult.pow(0.01)
-            }else if (current.gte("1.79e308")) {
-                mult = mult.pow(0.1)
-            } else if (current.gte("1e100")) {
-                mult = mult.pow(0.25)
-            } else if (current.gte("1e50")) {
+            }else if (current.gte("1.79e308")  && !hasUpgrade("vi",41)) {
+                if (!hasUpgrade('s',41)){
+                    mult = mult.pow(0.14)
+                } else if (!hasUpgrade("vi",33)) {
+                    mult = mult.pow(0.25)
+                } else {
+                    mult = mult.pow(0.4)
+                };
+            } else if (current.gte("1e100")  && !hasUpgrade("vi",41)) {
+                if (!hasUpgrade("vi",33)) {
+                    mult = mult.pow(0.25)
+                } else {
+                    mult = mult.pow(0.4)
+                };
+            } else if (current.gte("1e50")  && !hasUpgrade("vi",41)) {
                 mult = mult.pow(0.5)
             }
 
-            player.vi.virions = current.mul(mult.pow(ticks))
+            player.vi.virions = current.mul(mult.pow(ticks));
         }
+        if (hasUpgrade('s', 16)) {
+            if (layers.vi.buyables[11].canAfford()) {
+                layers.vi.buyables[11].buyMax()
+            }
+        if (layers.vi.buyables[12].canAfford()) {
+                layers.vi.buyables[12].buyMax()
+            }
+        }
+        if (hasMilestone('s', 3)) {
+            let pendingGain = this.getInfectedFliesGain();
+            
+            if (pendingGain.gt(0)) {
+                let passiveGain = pendingGain.mul(diff);
+                player.vi.infectedFlies = player.vi.infectedFlies.add(passiveGain);
+            }
+        }
+    },
+
+    getInfectedFliesGain() {
+        if (player.vi.virions.lt(50)) return new Decimal(0);
+
+        let gain = player.vi.virions.add(1).pow(0.02);
+        if (hasUpgrade('e', 102)) gain = gain.times(upgradeEffect("e", 102));
+        if (hasUpgrade('u', 32)) gain = gain.times(upgradeEffect("u", 32));
+        if (hasUpgrade('s', 11)) gain = gain.times(15);
+        if (hasUpgrade('s', 31)) gain = gain.times(upgradeEffect("s", 31));
+        if (hasUpgrade('s', 45)) gain = gain.times(1000);
+        if (hasUpgrade('vi', 31)) gain = gain.times(1000);
+        if (hasUpgrade('vi', 34)) gain = gain.times(1000);
+        if (hasUpgrade('vi', 35)) gain = gain.times(1000);
+        if (hasUpgrade('vi', 37)) gain = gain.times(upgradeEffect("vi", 37));
+        if (hasUpgrade('vi', 42)) gain = gain.times(10000);
+
+        return gain;
+    },
+
+    getDeadFliesGain() {
+        if (player.vi.infectedFlies.lt(1e53)) return new Decimal(0);
+
+        let gain = player.vi.infectedFlies.div("1e53").pow(0.1);
+
+        return gain;
     },
 
     clickables: {
         11: {
             title: "Infect Flies",
             display() {
-                let gain = player.vi.virions.add(1).pow(0.02)
-                if (hasUpgrade('e', 102)) gain = gain.times(upgradeEffect("e",102));
-                if (hasUpgrade('u', 32)) gain = gain.times(upgradeEffect("u",32));
+                let gain = layers.vi.getInfectedFliesGain();
                 return `Reset Virions and Buyables to harvest <b>${format(gain)}</b> Infected Flies.<br>
-                        <small></small>
-                        Requires at least 50 virions to reset`
+                        Requires at least 50 Virions to reset`;
             },
             canClick() {
-                if (player.vi.virions.gte(5e1)) {
-                    let gain = player.vi.virions.add(1).pow(0.02)
-                    if (hasUpgrade('e', 102)) gain = gain.times(upgradeEffect("e",102));
-                    if (hasUpgrade('u', 32)) gain = gain.times(upgradeEffect("u",32));
-                    return gain.gte(1) && player.vi.infectedFlies
-                }
-
+                return layers.vi.getInfectedFliesGain().gte(1);
             },
             onClick() {
-                let gain = player.vi.virions.add(1).pow(0.02)
-                if (hasUpgrade('e', 102)) gain = gain.times(upgradeEffect("e",102));
-                if (hasUpgrade('u', 32)) gain = gain.times(upgradeEffect("u",32));
-                
-                player.vi.infectedFlies = player.vi.infectedFlies.add(gain)
+                let gain = layers.vi.getInfectedFliesGain();
 
-                player.vi.virions = new Decimal(1)
-                player.vi.timer = 0
-                setBuyableAmount("vi", 11, new Decimal(0))
-                setBuyableAmount("vi", 12, new Decimal(0))
+                player.vi.infectedFlies = player.vi.infectedFlies.add(gain);
+
+
+                player.vi.virions = new Decimal(1);
+                player.vi.timer = 0;
+                setBuyableAmount("vi", 11, new Decimal(0));
+                setBuyableAmount("vi", 12, new Decimal(0));
             },
             style: { "height": "80px", "width": "220px", "border-radius": "8px", "background-color": "#9900ff" }
+        },
+        12: {
+            title: "Kill Flies",
+            display() {
+                let gain = layers.vi.getDeadFliesGain();
+                return `Reset Everything Symbiosis does to get <b>${format(gain)}</b> Dead Flies.<br>
+                        Requires at least 1e53 Infected Flies to reset`;
+            },
+            canClick() {
+                return layers.vi.getDeadFliesGain().gte(1);
+            },
+            onClick() {
+                let gain = layers.vi.getDeadFliesGain();
+
+                player.vi.deadFlies = player.vi.deadFlies.add(gain);
+
+                layerDataReset("vi",["upgrades","milestones","deadFlies"]);
+                layerDataReset("e",["upgrades","milestones"]);
+                layerDataReset("u",["upgrades","milestones"]);
+                doReset("s",true)
+                player.vi.infectedFlies = new Decimal(0);
+                player.vi.virions = new Decimal(1);
+                player.vi.timer = 0;
+                setBuyableAmount("vi", 11, new Decimal(0));
+                setBuyableAmount("vi", 12, new Decimal(0));
+            },
+            style: { "height": "80px", "width": "220px", "border-radius": "8px", "background-color": "#c70000c9" },
+            unlocked() {return hasMilestone("s",8)}
+        }
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+
+        if(hasMilestone('s',4)) keep.push("upgrades");
+        keep.push("deadFlies");
+
+        if(layers[resettingLayer].row > this.row) {
+            layerDataReset("vi",keep)
         }
     },
 
@@ -2194,11 +2434,14 @@ addLayer("vi", {
     },
 
     onPrestige(gain) {
-        player.vi.virions = new Decimal(1)
-        player.vi.infectedFlies = new Decimal(0)
-        player.vi.timer = 0
-        setBuyableAmount("vi", 11, new Decimal(0))
-        setBuyableAmount("vi", 12, new Decimal(0))
+        if(!hasMilestone('s',1)) {
+            player.vi.virions = new Decimal(1)
+            player.vi.infectedFlies = new Decimal(0)
+            player.vi.timer = 0
+            setBuyableAmount("vi", 11, new Decimal(0))
+            setBuyableAmount("vi", 12, new Decimal(0))
+        }
+
     },
 
     upgrades: {
@@ -2375,7 +2618,146 @@ addLayer("vi", {
             effectDisplay() { return `${format(this.effect())}x` },
             unlocked() {return hasUpgrade("vi", 25)}
         },
+        31: {
+            title: "First blood",
+            description: "x1000 Infected Flies",
+            cost: new Decimal("1"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasMilestone("s", 8)}
+        },
+        32: {
+            title: "Lethality",
+            description: "x2 Replication",
+            cost: new Decimal("2"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 31)}
+        },
+        33: {
+            title: "Agony",
+            description: "Weaken Tier 3 softcap even more",
+            cost: new Decimal("3"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 32)}
+        },
+        34: {
+            title: "Pain",
+            description: "x1000 IF and 2x Replication",
+            cost: new Decimal("6"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 33)}
+        },
+        35: {
+            title: "Suffer",
+            description: "Dead Flies Boost mRNA and x1000 Infected Flies",
+            cost: new Decimal("10"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            effect() {
+                let eff = player.vi.deadFlies.add(1).pow(2)
+                eff = softcap(eff,new Decimal(1e16),0.3)
+                return eff
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 34)}
+        },
+        36: {
+            title: "Hunger Pain",
+            description: "Dead Flies boost nutrients",
+            cost: new Decimal("15"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            effect() {
+                let eff = player.vi.deadFlies.add(1).pow(0.2)
+                return eff
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 35)}
+        },
+        37: {
+            title: "Ache",
+            description: "Dead flies boost Infected Flies",
+            cost: new Decimal("20"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            effect() {
+                let eff = player.vi.deadFlies.add(1).pow(1.1)
+                eff = softcap(eff,new Decimal(1e5),0.2)
+                return eff
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 36)}
+        },
+        41: {
+            title: "Death",
+            description: "Remove Tier 1,2,3 softcaps",
+            cost: new Decimal("30"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 37)}
+        },
+        42: {
+            title: "Finish him",
+            description: "x1e4 Infected Flies",
+            cost: new Decimal("100"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 41)}
+        },
+        43: {
+            title: "FATALITY",
+            description: "x1e5 DNA",
+            cost: new Decimal("200"),
+            currencyDisplayName: "Dead Flies",
+            currencyInternalName: "deadFlies",
+            style: {
+                "background-color":"red"
+            },
+            currencyLocation() { return player.vi },
+            unlocked() {return hasUpgrade("vi", 42)}
+        },
     },
+    autoPrestige(){return hasMilestone('s',4)},
+    resetsNothing(){return hasMilestone('s',4)},
 
     tabFormat: [
         "main-display",
@@ -2386,13 +2768,15 @@ addLayer("vi", {
                 let v = player.vi.virions;
                 let softcapText = "";
                 let replicasoftcap = "softcapped";
-                if (v.gte("1e1000")) {
+                if (v.gte("1e2000")) {
+                    softcapText = " <span style='color: #ff00f2; font-size: 12px;'>(Tier 5 Softcap past 1e2000)</span>"
+                } else if (v.gte("1e1000")) {
                     softcapText = " <span style='color: #ff006a; font-size: 12px;'>(Tier 4 Softcap past 1e1000)</span>"
-                } else if (v.gte("1.79e308")) {
+                } else if (v.gte("1.79e308") && !hasUpgrade("vi",41)) {
                     softcapText = " <span style='color: #ff2222; font-size: 12px;'>(Tier 3 Softcap past 1e308)</span>"
-                } else if (v.gte("1e100")) {
+                } else if (v.gte("1e100") && !hasUpgrade("vi",41)) {
                     softcapText = " <span style='color: #ff8800; font-size: 12px;'>(Tier 2 Softcap past 1e100)</span>"
-                } else if (v.gte("1e50")) {
+                } else if (v.gte("1e50") && !hasUpgrade("vi",41)) {
                     softcapText = " <span style='color: #ffff44; font-size: 12px;'>(Tier 1 Softcap past 1e50)</span>"
                 }
 
@@ -2407,6 +2791,13 @@ addLayer("vi", {
         ["display-text", function() {
             return `You have <h3 style='color: #9900ff;'>${format(player.vi.infectedFlies)}</h3> Infected Flies`
         }],
+        ["display-text", function() {
+            if(player.vi.infectedFlies.gte("1e53") || player.vi.deadFlies.gt(0)) {
+                return `You have <h3 style='color: #8b0000;'>${format(player.vi.deadFlies)}</h3> Dead Flies` 
+            } else {
+                return ""
+            }
+        }],
         "blank",
         "clickables",
         "blank",
@@ -2418,85 +2809,399 @@ addLayer("vi", {
     ],
 })
 
-// addLayer("s", {
-//     name: "symbiosis", // This is optional, only used in a few places, If absent it just uses the layer id.
-//     symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
-//     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-//     startData() {
-//         return {
-//             unlocked: false,
-//             points: new Decimal(0),
-//             nutrients: new Decimal(0), 
-//         }
-//     },
-//     color: "#51fd93",
-//     requires: new Decimal("1e95"), // Can be a function that takes requirement increases into account
-//     resource: "symbionts", // Name of prestige currency
-//     baseResource: "DNA", // Name of resource prestige is based on
-//     baseAmount() {return player.e.points}, // Get the current amount of baseResource
-//     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-//     exponent: 1.4, // Prestige currency exponent
-//     branches: ["u","vi"],
-//     base:1e20,
-//     gainMult() { // Calculate the multiplier for main currency from bonuses
-//         let mult = new Decimal(1);
-//         return mult
-//     },
+addLayer("s", {
+    name: "symbiosis", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: false,
+            points: new Decimal(0),
+            nutrients: new Decimal(0), 
+        }
+    },
+    color: "#51fd93",
+    requires: new Decimal("1e95"), // Can be a function that takes requirement increases into account
+    resource: "symbionts", // Name of prestige currency
+    baseResource: "DNA", // Name of resource prestige is based on
+    baseAmount() {return player.e.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1.4, // Prestige currency exponent
+    branches: ["u","vi"],
+    base:1e20,
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1);
+        return mult
+    },
 
-//     nutGain() {
-//         let level = player.s.points;
-//         if (level.lte(0)) return new Decimal(0);
+    nutGain() {
+        let level = player.s.points;
+        if (level.lte(0)) return new Decimal(0);
         
-//         let rate = Decimal.pow(10, level.sub(1));
+        let rate = Decimal.pow(10, level.sub(1));
+        if(hasUpgrade('s',16)) rate = rate.mul(2);
+        if(hasUpgrade('s',21)) rate = rate.mul(10);
+        if(hasUpgrade('s',26)) rate = rate.mul(5);
+        if(hasUpgrade('s',34)) rate = rate.mul(10);
+        if(hasUpgrade('s',45)) rate = rate.mul(3);
+        if(hasUpgrade('vi',36)) rate = rate.mul(upgradeEffect("vi", 36));
 
-//         return rate
-//     },
+        return rate
+    },
     
-//     gainExp() { // Calculate the exponent on main currency from bonuses
-//         return new Decimal(1)
-//     },
-//     // effect() {
-// 	// 	return player.p.points.add(1).pow(0.9)
-// 	// },
-// 	// effectDescription() {
-// 	// 	return "which are boosting flies eaten by "+format(tmp.p.effect) + "x"
-// 	// },
-//     // passiveGeneration(){return hasMilestone("f",1)},
-//     row: 4, // Row the layer is in on the tree (0 is the first row)
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    // effect() {
+	// 	return player.p.points.add(1).pow(0.9)
+	// },
+	// effectDescription() {
+	// 	return "which are boosting flies eaten by "+format(tmp.p.effect) + "x"
+	// },
+    // passiveGeneration(){return hasMilestone("f",1)},
+    row: 4, // Row the layer is in on the tree (0 is the first row)
 
-//     update(diff) {
-//         if (player.s.unlocked) {
-//             player.s.nutrients = player.s.nutrients.add(this.nutGain().mul(diff))
-//         }
-//     },
+    update(diff) {
+        if (player.s.unlocked) {
+            player.s.nutrients = player.s.nutrients.add(this.nutGain().mul(diff))
+        }
+    },
 
-//     tabFormat: [
-//         "main-display",
-//         "prestige-button",
-//         "blank",
-//         ["display-text", function() {
-//             return `You have <h2 style='color: #2be296;'>${format(player.s.nutrients)}</h2> Shared Nutrients
-//                     <br><small>(+${format(layers.s.nutGain())}/sec based on Symbionts)</small>`
-//         }],
-//         "blank",
-//         "milestones",
-//         "blank",
-//         "upgrades",
-//     ],
+    tabFormat: [
+        "main-display",
+        "prestige-button",
+        "blank",
+        ["display-text", function() {
+            return `You have <h2 style='color: #2be296;'>${format(player.s.nutrients)}</h2> Shared Nutrients
+                    <br><small>(+${format(layers.s.nutGain())}/sec based on Symbionts)</small>`
+        }],
+        "blank",
+        "milestones",
+        "blank",
+        "upgrades",
+    ],
     
 
-//     milestones: {
-//         1: {
-//             requirementDescription: "First symbiont",
-//             done() { return player.s.points.gte(1) },
-//             effectDescription: "A symbiont keeps your flies,farms,poop,enzymes automation, Good for start",
-//         },
-//     },
+    milestones: {
+        1: {
+            requirementDescription: "First symbiont",
+            done() { return player.s.points.gte(1) },
+            effectDescription: "A symbiont keeps your flies,farms,poop,enzymes automation,, Virus Strain doesn't reset Virus content. Good for start",
+        },
+        2: {
+            requirementDescription: "2 symbionts",
+            done() { return player.s.points.gte(2) },
+            effectDescription: "Automate Mutations and they reset nothing",
+            unlocked() { return hasMilestone("s",1) },
+        },
+        3: {
+            requirementDescription: "3 symbionts",
+            done() { return player.s.points.gte(3) },
+            effectDescription: "Generate 100% of Infected Flies per second, And autobuy Evolution Tree",
+            unlocked() { return hasMilestone("s",2) },
+        },
+        4: {
+            requirementDescription: "4 symbionts",
+            done() { return player.s.points.gte(4) },
+            effectDescription: "Keep Mutation and Virus Ugrades Also auto Virus Strains, OP isn't it? The magic of symbiosis",
+            unlocked() { return hasMilestone("s",3) },
+        },
+        5: {
+            requirementDescription: "5 symbionts",
+            done() { return player.s.points.gte(5) },
+            effectDescription: "Generate 100% of DNA per second",
+            unlocked() { return hasMilestone("s",4) },
+        },
+        6: {
+            requirementDescription: "6 symbionts",
+            done() { return player.s.points.gte(6) },
+            effectDescription: "Unlock more upgrades",
+            unlocked() { return hasMilestone("s",5) },
+        },
+        7: {
+            requirementDescription: "7 symbionts",
+            done() { return player.s.points.gte(7) },
+            effectDescription: "x1e10 DNA",
+            unlocked() { return hasMilestone("s",6) },
+        },
+        8: {
+            requirementDescription: "9 symbionts",
+            done() { return player.s.points.gte(9) },
+            effectDescription: "Unlock Fatality reset in virus, Plague tree reference",
+            unlocked() { return hasMilestone("s",7) },
+        },
+        9: {
+            requirementDescription: "10 symbionts",
+            done() { return player.s.points.gte(10) },
+            effectDescription: "Endgame If you get 11th Symbiont You're cool",
+            unlocked() { return hasMilestone("s",8) },
+        },
+    },
 
-//     upgrades:{
-//     },
-//     hotkeys: [
-//         {key: "s", description: "S: make a symbiosis with something", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-//     ],
-//     layerShown(){return hasUpgrade('e', 112) || player.s.points.gte(1)},
-// })
+    upgrades:{
+        11: {
+            title: "The beggining of Symbiosis should be strong",
+            description: "^1.02 Flies, ^1.02 Poop, ^1.01 Enzymes, x10 DNA, 25x mRNA, x1.8x Replication, x15 Infected Flies",
+            cost: new Decimal(10),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s ? player.s : player },
+        },
+        12: {
+            title: "Why do i forget to boost wings?",
+            description: "Nutrients Boosts wings",
+            cost: new Decimal(20),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s ? player.s : player },
+            effect() {
+                return player.s.nutrients.add(1).pow(4.5)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",11)}
+        },
+        13: {
+            title: "Anyways lets automate habitats, they are frustrating lol",
+            description: "Auto Habitats and keep their challenges",
+            cost: new Decimal(40),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",12)}
+        },
+        14: {
+            title: "Symbiont makes compost",
+            description: "Nutrients Boost Poop",
+            cost: new Decimal(50),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+                        effect() {
+                return player.s.nutrients.add(1).pow(6)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",13)}
+        },
+        15: {
+            title: "Sharing DNA",
+            description: "Nutrients Boost DNA",
+            cost: new Decimal(100),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return player.s.nutrients.add(1).pow(0.7)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",14)}
+        },
+        16: {
+            title: "Virus Automation",
+            description: "Autobuy Virus Buyables, + they spend nothing also 1.4x replication, 2x Nutrients",
+            cost: new Decimal(120),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",15)}
+        },
+        21: {
+            title: "Condensed nutrients",
+            description: "x10 Nutrients",
+            cost: new Decimal(200),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",16)}
+        },
+        22: {
+            title: "Mutating Symbiont",
+            description: "Nutrients boost mRNA, also get 1.5x replication",
+            cost: new Decimal(800),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return player.s.nutrients.add(1).pow(0.8)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",21)}
+        },
+        23: {
+            title: "You should get 2nd Symbiont",
+            description: "Nutrients Boost Enzymes, + Auto Varieties",
+            cost: new Decimal(5000),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return player.s.nutrients.add(1).pow(4)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",22)}
+        },
+        24: {
+            title: "Virus acceleration",
+            description: "Virus now always have an interval of 0.07s yup faster than max",
+            cost: new Decimal(5000),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",23)}
+        },
+        25: {
+            title: "Virus Inflation",
+            description: "x1.6 Replication",
+            cost: new Decimal(6000),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",24)}
+        },
+        26: {
+            title: "Nutritious Evolution",
+            description: "Nutrients Boost DNA + x5 Nutrients",
+            cost: new Decimal(4000),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return player.s.nutrients.add(1).pow(0.9)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",25)}
+        },
+        31: {
+            title: "RNA virus type",
+            description: "mRNA boosts Infected Flies",
+            cost: new Decimal(15000),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return player.u.mrna.add(1).pow(0.15)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",26)}
+        },
+        32: {
+            title: "Virus is too timewally",
+            description: "1.98743x replication",
+            cost: new Decimal(150000),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",31)}
+        },
+        33: {
+            title: "LORE in a game where you eat flies?",
+            description: "Gerald gives you a boost, basically Flies Boost DNA",
+            cost: new Decimal(200000),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return player.points.add(1).pow(0.0005)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",32)}
+        },
+        34: {
+            title: "Lore drop",
+            description: "You had a friend called Claire, you were friends with her since childhood until... Anyways get x9.99 Nutrients",
+            cost: new Decimal(2000000),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",33)}
+        },
+        35: {
+            title: "Afterthoughts",
+            description: "1.7x Replication",
+            cost: new Decimal("4e7"),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",34)}
+        },
+        36: {
+            title: "Are you ready?",
+            description: "Infected Flies boost mRNA",
+            cost: new Decimal("3e8"),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return player.vi.infectedFlies.add(1).pow(0.4)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",35)}
+        },
+        41: {
+            title: "Lore",
+            description: "Unlock upgrades that spread out in 4 layers that will reveal some lore try to find them, Since they are autobuyed find them and read them, Weaken Tier 3 softcap",
+            cost: new Decimal("1e9"),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",36)}
+        },
+        42: {
+            title: "You want speed get it!",
+            description: "2x replication",
+            cost: new Decimal("5e9"),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",41)}
+        },
+        43: {
+            title: "Strainy virus",
+            description: "Virus strains boost mRNA",
+            cost: new Decimal("1e11"),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return Decimal.pow(30,player.vi.points)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",42)}
+        },        
+        44: {
+            title: "Afterthought 2",
+            description: "x1e4 DNA",
+            cost: new Decimal("1e11"),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",43)}
+        },
+        45: {
+            title: "Virus gets many boosts",
+            description: "2.2x Replication, x1000 Infected Flies, 3x Nutrients",
+            cost: new Decimal("5e11"),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            unlocked() {return hasUpgrade("s",44)}
+        },
+
+        46: {
+            title: "Digested DNA",
+            description: "Enzymes Boost DNA",
+            cost: new Decimal("1.7e12"),
+            currencyDisplayName: "Shared Nutrients",
+            currencyInternalName: "nutrients",
+            currencyLocation() { return player.s },
+            effect() {
+                return player.m.points.pow(0.0007)
+            },
+            effectDisplay() { return `${format(this.effect())}x` },
+            unlocked() {return hasUpgrade("s",45)}
+        },
+    },
+    hotkeys: [
+        {key: "s", description: "S: make a symbiosis with something", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasUpgrade('e', 112) || player.s.points.gte(1)},
+})

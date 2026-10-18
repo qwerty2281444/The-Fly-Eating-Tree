@@ -19,11 +19,15 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4",
-	name: "Mutating and Infecting",
+	num: "0.5",
+	name: "Symbiosis",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.5</h3><br>
+		- Added 1 Layer and Some content
+		<br>
+	<h3>
 	<h3>v0.4</h3><br>
 		- Added 2 Layers and MUCH MORRE CONTENT
 		<br>
@@ -120,7 +124,6 @@ function getPointGen() {
         gain = gain.pow(0.05)
     };
 	if (hasUpgrade('e', 11)) gain = gain.times(100);
-	if (hasUpgrade('e', 11)) mult = mult.pow(1.02);
 	if (hasUpgrade('e', 21)) gain = gain.times(upgradeEffect('e',21));
 	if (hasUpgrade('e', 33)) gain = gain.times(upgradeEffect('e',33));
 	if (hasUpgrade('e', 41)) gain = gain.times(1e20);
@@ -131,9 +134,10 @@ function getPointGen() {
 	if (hasUpgrade('u', 27)) gain = gain.times(upgradeEffect('u',27));
 	if (hasUpgrade('vi', 12)) gain = gain.times(upgradeEffect('vi',12));
 	if (hasUpgrade('vi', 14)) gain = gain.times(upgradeEffect('vi',14));
-	
-	gain = softcap(gain,new Decimal("1e1000"),0.5)
-	
+	if (hasUpgrade('w', 31)) gain = gain.times("1e250");
+	if (hasUpgrade('h', 11)) gain = gain.times("1e100");
+	gain = softcap(gain,new Decimal("1e1000"),0.5);
+	if (hasUpgrade('s', 11)) gain = gain.pow(1.02);
 	return gain
 }
 
