@@ -2213,7 +2213,7 @@ addLayer("vi", {
         if (hasUpgrade("e", 103)) mult = mult.mul(1.2);
         if (hasUpgrade("vi", 24)) mult = mult.mul(1.3);
         if (hasUpgrade("vi", 25)) mult = mult.mul(1.35);
-        if (hasUpgrade('s', 11)) mult = mult.times(1.8);
+        if (hasUpgrade('s', 11)) mult = mult.times(2);
         if (hasUpgrade('s', 16)) mult = mult.times(1.4);
         if (hasUpgrade('s', 22)) mult = mult.times(1.5);
         if (hasUpgrade('s', 25)) mult = mult.times(1.6);
@@ -2841,6 +2841,7 @@ addLayer("s", {
         let rate = Decimal.pow(10, level.sub(1));
         if(hasUpgrade('s',16)) rate = rate.mul(2);
         if(hasUpgrade('s',21)) rate = rate.mul(10);
+        if(hasUpgrade('s',23)) rate = rate.mul(1.7);
         if(hasUpgrade('s',26)) rate = rate.mul(5);
         if(hasUpgrade('s',34)) rate = rate.mul(10);
         if(hasUpgrade('s',45)) rate = rate.mul(3);
@@ -2941,7 +2942,7 @@ addLayer("s", {
     upgrades:{
         11: {
             title: "The beggining of Symbiosis should be strong",
-            description: "^1.02 Flies, ^1.02 Poop, ^1.01 Enzymes, x10 DNA, 25x mRNA, x1.8x Replication, x15 Infected Flies",
+            description: "^1.02 Flies, ^1.02 Poop, ^1.01 Enzymes, x10 DNA, 25x mRNA, x2 Replication, x15 Infected Flies",
             cost: new Decimal(10),
             currencyDisplayName: "Shared Nutrients",
             currencyInternalName: "nutrients",
@@ -2985,7 +2986,7 @@ addLayer("s", {
         15: {
             title: "Sharing DNA",
             description: "Nutrients Boost DNA",
-            cost: new Decimal(100),
+            cost: new Decimal(75),
             currencyDisplayName: "Shared Nutrients",
             currencyInternalName: "nutrients",
             currencyLocation() { return player.s },
@@ -3007,7 +3008,7 @@ addLayer("s", {
         21: {
             title: "Condensed nutrients",
             description: "x10 Nutrients",
-            cost: new Decimal(200),
+            cost: new Decimal(150),
             currencyDisplayName: "Shared Nutrients",
             currencyInternalName: "nutrients",
             currencyLocation() { return player.s },
@@ -3016,7 +3017,7 @@ addLayer("s", {
         22: {
             title: "Mutating Symbiont",
             description: "Nutrients boost mRNA, also get 1.5x replication",
-            cost: new Decimal(800),
+            cost: new Decimal(700),
             currencyDisplayName: "Shared Nutrients",
             currencyInternalName: "nutrients",
             currencyLocation() { return player.s },
@@ -3028,8 +3029,8 @@ addLayer("s", {
         },
         23: {
             title: "You should get 2nd Symbiont",
-            description: "Nutrients Boost Enzymes, + Auto Varieties",
-            cost: new Decimal(5000),
+            description: "Nutrients Boost Enzymes, + Auto Varieties,1.7x Nutrients",
+            cost: new Decimal(3000),
             currencyDisplayName: "Shared Nutrients",
             currencyInternalName: "nutrients",
             currencyLocation() { return player.s },
