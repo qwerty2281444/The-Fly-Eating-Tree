@@ -604,7 +604,7 @@ addLayer("m", {
 	// },
     // passiveGeneration(){return hasMilestone("f",1)},
     row: 2, // Row the layer is in on the tree (0 is the first row)
-    passiveGeneration(){if (hasChallenge('h',31) && !hasUpgrade('e',51) && hasMilestone('s',1)){
+    passiveGeneration(){if (hasChallenge('h',31) && !hasUpgrade('e',51) && !hasMilestone('s',1)){
         return 0.0001
     } else if(hasUpgrade('e',51) || hasMilestone('s',1)){
         return 1
