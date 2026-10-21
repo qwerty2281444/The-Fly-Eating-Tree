@@ -1282,7 +1282,7 @@ addLayer("e", {
         if (hasMilestone('s',7)) mult = mult.times("1e10");
         if (hasUpgrade('s', 44)) mult = mult.times(1000);
         if (hasUpgrade('s', 46)) mult = mult.times(upgradeEffect('s',46));
-        if (hasUpgrade('vi', 43)) mult = mult.times("1e5");
+        if (hasUpgrade('vi', 43)) mult = mult.times("1e15");
         return mult
     },
     
@@ -2747,7 +2747,7 @@ addLayer("vi", {
         },
         43: {
             title: "FATALITY",
-            description: "x1e5 DNA",
+            description: "x1e15 DNA",
             cost: new Decimal("200"),
             currencyDisplayName: "Dead Flies",
             currencyInternalName: "deadFlies",
@@ -2934,7 +2934,7 @@ addLayer("s", {
         9: {
             requirementDescription: "10 symbionts",
             done() { return player.s.points.gte(10) },
-            effectDescription: "Impossible right now, Sorry.",
+            effectDescription: "ENDGAME",
             unlocked() { return hasMilestone("s",8) },
         },
     },
