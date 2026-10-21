@@ -2252,10 +2252,11 @@ addLayer("vi", {
 
             let current = player.vi.virions
 
-            if (current.gte("1e2000")) {
-                mult = mult.pow(0.004)
-            }else if (current.gte("1e1000")) {
-                mult = mult.pow(0.01)
+
+            if (current.gte("1e1000")) {
+                let over = current.log10().sub(1000).max(0).toNumber()
+                let exp = Math.max(0.0005, 0.012 / (1 + over * 0.005))
+                mult = mult.pow(exp)
             }else if (current.gte("1.79e308")  && !hasUpgrade("vi",41)) {
                 if (!hasUpgrade('s',41)){
                     mult = mult.pow(0.14)
@@ -2768,10 +2769,8 @@ addLayer("vi", {
                 let v = player.vi.virions;
                 let softcapText = "";
                 let replicasoftcap = "softcapped";
-                if (v.gte("1e2000")) {
-                    softcapText = " <span style='color: #ff00f2; font-size: 12px;'>(Tier 5 Softcap past 1e2000)</span>"
-                } else if (v.gte("1e1000")) {
-                    softcapText = " <span style='color: #ff006a; font-size: 12px;'>(Tier 4 Softcap past 1e1000)</span>"
+                if (v.gte("1e1000")) {
+                    softcapText = " <span style='color: #ff006a; font-size: 12px;'>(Tier 4 Softcap past 1e1000, It becomes stronger the more virions you have)</span>"
                 } else if (v.gte("1.79e308") && !hasUpgrade("vi",41)) {
                     softcapText = " <span style='color: #ff2222; font-size: 12px;'>(Tier 3 Softcap past 1e308)</span>"
                 } else if (v.gte("1e100") && !hasUpgrade("vi",41)) {
