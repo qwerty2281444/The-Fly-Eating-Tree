@@ -2255,7 +2255,7 @@ addLayer("vi", {
 
             if (current.gte("1e1000")) {
                 let over = current.log10().sub(1000).max(0).toNumber()
-                let exp = Math.max(0.0005, 0.012 / (1 + over * 0.005))
+                let exp = Math.max(0.0005, 0.03 / (1 + over * 0.005))
                 mult = mult.pow(exp)
             }else if (current.gte("1.79e308")  && !hasUpgrade("vi",41)) {
                 if (!hasUpgrade('s',41)){
@@ -2308,6 +2308,7 @@ addLayer("vi", {
         if (hasUpgrade('vi', 34)) gain = gain.times(1000);
         if (hasUpgrade('vi', 35)) gain = gain.times(1000);
         if (hasUpgrade('vi', 37)) gain = gain.times(upgradeEffect("vi", 37));
+        if (hasUpgrade('vi', 41)) gain = gain.times(100);
         if (hasUpgrade('vi', 42)) gain = gain.times(10000);
 
         return gain;
@@ -2722,7 +2723,7 @@ addLayer("vi", {
         },
         41: {
             title: "Death",
-            description: "Remove Tier 1,2,3 softcaps",
+            description: "Remove Tier 1,2,3 softcaps, 100x IF",
             cost: new Decimal("30"),
             currencyDisplayName: "Dead Flies",
             currencyInternalName: "deadFlies",
@@ -2933,7 +2934,7 @@ addLayer("s", {
         9: {
             requirementDescription: "10 symbionts",
             done() { return player.s.points.gte(10) },
-            effectDescription: "Endgame If you get 11th Symbiont You're cool",
+            effectDescription: "Impossible right now, Sorry.",
             unlocked() { return hasMilestone("s",8) },
         },
     },
